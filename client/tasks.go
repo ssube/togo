@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -30,13 +31,40 @@ type Task struct {
 	Priority int    `json:"priority" yaml:"priority,omitempty"`
 }
 
-// PrintTasks in a table
-func PrintTasks(tasks []Task) {
-	w := tabwriter.NewWriter(os.Stdout, 4, 2, 1, ' ', tabwriter.AlignRight)
-	fmt.Fprintln(w, "id", "\t", "priority", "\t", "content")
-	for _, t := range tasks {
-		fmt.Fprintln(w, t.ID, "\t", t.Priority, "\t", t.Content)
+func Tabulate(cols []string) []interface{} {
+	tabs := make([]interface{}, len(cols)*2)
+	for i, c := range cols {
+		tabs[i*2] = c
+		tabs[(i*2)+1] = "\t"
 	}
+	return tabs
+}
+
+// PrintTasks in a table
+func PrintTasks(tasks []Task, cols []string) {
+	w := tabwriter.NewWriter(os.Stdout, 4, 2, 1, ' ', tabwriter.AlignRight)
+	fmt.Fprintln(w, Tabulate(cols)...)
+
+	// prepare a slice for cols and tabs
+	taskCols := make([]string, len(cols))
+	for _, t := range tasks {
+		for i, c := range cols {
+			elem := reflect.ValueOf(&t).Elem()
+			field := elem.FieldByName(c)
+			fkind := field.Type().Kind()
+
+			switch fkind {
+			case reflect.Int:
+				taskCols[i] = strconv.FormatInt(field.Int(), 10)
+			case reflect.String:
+				taskCols[i] = field.String()
+			default:
+				taskCols[i] = "."
+			}
+		}
+		fmt.Fprintln(w, Tabulate(taskCols)...)
+	}
+
 	w.Flush()
 }
 

@@ -20,6 +20,7 @@ var rootCmd = &cobra.Command{
 
 func Execute(client *client.Client) {
 	rootClient = client
+
 	err := rootCmd.Execute()
 	if err != nil {
 		fmt.Println(err)

@@ -2,30 +2,31 @@ package cmd
 
 import (
 	"log"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/ssube/togo/client"
 )
 
 func init() {
-	content := ""
+	columns := []string{}
 
 	addCmd := &cobra.Command{
 		Use:   "add",
-		Short: "Print the version number of Hugo",
-		Long:  `All software has versions. This is Hugo's`,
+		Short: "add a task",
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			tasks, err := rootClient.AddTask(client.Task{
-				Content: content,
+				Content: strings.Join(args, " "),
 			})
 			if err != nil {
 				log.Printf("error adding task: %s", err.Error())
 			}
-			client.PrintTasks(tasks)
+			client.PrintTasks(tasks, columns)
 		},
 	}
 
-	addCmd.Flags().StringVarP(&content, "content", "c", content, "task content")
+	addCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
 
 	rootCmd.AddCommand(addCmd)
 }

@@ -98,6 +98,10 @@ closing 01234
 
 ## Todo
 
-Future features:
+Features:
 
-- list projects
+- [x] labels
+- [x] filters
+- [x] custom columns
+- [ ] sort order
+- [ ] list projects

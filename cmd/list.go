@@ -8,7 +8,11 @@ import (
 )
 
 func init() {
-	labels := make([]string, 0)
+	columns := []string{
+		"ID",
+		"Content",
+	}
+	labels := []string{}
 	project := ""
 
 	listCmd := &cobra.Command{
@@ -25,10 +29,11 @@ func init() {
 				}
 			}
 			tasks, _ := rootClient.GetTasks(project, args, labels)
-			client.PrintTasks(tasks)
+			client.PrintTasks(tasks, columns)
 		},
 	}
 
+	listCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
 	listCmd.Flags().StringSliceVarP(&labels, "labels", "l", labels, "filter tasks with selected task labels")
 	listCmd.Flags().StringVarP(&project, "project", "p", project, "project from which to list tasks")
 

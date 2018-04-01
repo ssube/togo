@@ -38,6 +38,10 @@ $ togo
 
 ### List
 
+```none
+togo list [--project project_id] [--labels label1,label2,label3] [filter...]
+```
+
 List incomplete tasks:
 
 ```shell
@@ -47,7 +51,15 @@ $ togo list
  01231          1  clean desk
  01232          1  update gitlab
  01233          1  clean computer monitor
+
+$ togo list --project 03211 --labels computer,desk "search: monitor"
+
+    id   priority  content
+ 01233          1  clean computer monitor
 ```
+
+The `project` is used to filter a single project, `labels` are applied with an `|` operator, and additional arguments
+are assembled into a filter with `&`.
 
 ### Add
 
@@ -72,3 +84,9 @@ closing 01232
 closing 01233
 closing 01234
 ```
+
+## Todo
+
+Future features:
+
+- list projects

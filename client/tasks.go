@@ -72,11 +72,36 @@ func (c *Client) Parse(data []byte) ([]Task, error) {
 }
 
 // GetTasks lists incomplete and recurring tasks
-func (c *Client) GetTasks() ([]Task, error) {
-	resp, err := c.Request().Get(c.GetEndpoint("tasks"))
+func (c *Client) GetTasks(project string, filter string, labels ...string) ([]Task, error) {
+	r := c.Request()
+
+	if project != "" {
+		r = r.SetQueryParam("project_id", project)
+	}
+
+	// build the filters
+	filterComps := make([]string, 0)
+
+	if len(filter) > 0 {
+		filterComps = append(filterComps, filter)
+	}
+
+	if len(labels) > 0 {
+		labelFilter := "@" + strings.Join(labels, " | @")
+		filterComps = append(filterComps, labelFilter)
+	}
+
+	r = r.SetQueryParam("filter", strings.Join(filterComps, " & "))
+
+	resp, err := r.Get(c.GetEndpoint("tasks"))
 	if err != nil {
 		log.Printf("error listing tasks: %s", err.Error())
 		return nil, err
+	}
+
+	if resp.StatusCode() != 200 {
+		log.Printf("unexpected status listing tasks: %d", resp.StatusCode())
+		return nil, errors.New("unexpected status code")
 	}
 
 	tasks, err := c.Parse(resp.Body())

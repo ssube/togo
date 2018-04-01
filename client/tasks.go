@@ -16,12 +16,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Client for API
 type Client struct {
 	client *resty.Client
 	config *config.Config
-	root   string
 }
 
+// Task model from API
 type Task struct {
 	Content  string `json:"content" yaml:"content"`
 	ID       int    `json:"id" yaml:"id,omitempty"`
@@ -29,6 +30,7 @@ type Task struct {
 	Priority int    `json:"priority" yaml:"priority,omitempty"`
 }
 
+// PrintTasks in a table
 func PrintTasks(tasks []Task) {
 	w := tabwriter.NewWriter(os.Stdout, 4, 2, 1, ' ', tabwriter.AlignRight)
 	fmt.Fprintln(w, "id", "\t", "priority", "\t", "content")
@@ -38,6 +40,7 @@ func PrintTasks(tasks []Task) {
 	w.Flush()
 }
 
+// New client
 func New(config *config.Config) *Client {
 	client := &Client{
 		client: resty.New(),
@@ -46,7 +49,8 @@ func New(config *config.Config) *Client {
 	return client
 }
 
-func (c *Client) Endpoint(parts ...string) string {
+// GetEndpoint formats a partial path as an API endpoint
+func (c *Client) GetEndpoint(parts ...string) string {
 	path := []string{
 		c.config.Root,
 	}
@@ -54,10 +58,12 @@ func (c *Client) Endpoint(parts ...string) string {
 	return strings.Join(append(path, parts...), "/")
 }
 
+// Request an API endpoint with authorization
 func (c *Client) Request() *resty.Request {
 	return c.client.R().SetHeader("Authorization", fmt.Sprintf("Bearer %s", c.config.Token))
 }
 
+// Parse a reponse into list of tasks
 func (c *Client) Parse(data []byte) ([]Task, error) {
 	out := make([]Task, 0)
 	err := yaml.Unmarshal(data, &out)
@@ -65,8 +71,9 @@ func (c *Client) Parse(data []byte) ([]Task, error) {
 	return out, err
 }
 
+// GetTasks lists incomplete and recurring tasks
 func (c *Client) GetTasks() ([]Task, error) {
-	resp, err := c.Request().Get(c.Endpoint("tasks"))
+	resp, err := c.Request().Get(c.GetEndpoint("tasks"))
 	if err != nil {
 		log.Printf("error listing tasks: %s", err.Error())
 		return nil, err
@@ -85,6 +92,7 @@ func (c *Client) GetTasks() ([]Task, error) {
 	return tasks, nil
 }
 
+// AddTask creates a new task
 func (c *Client) AddTask(task Task) ([]Task, error) {
 	post, err := json.Marshal(task)
 	if err != nil {
@@ -94,7 +102,7 @@ func (c *Client) AddTask(task Task) ([]Task, error) {
 	resp, err := c.Request().
 		SetHeader("Content-Type", "application/json").
 		SetBody(post).
-		Post(c.Endpoint("tasks"))
+		Post(c.GetEndpoint("tasks"))
 	if err != nil {
 		log.Printf("error adding task: %s", err.Error())
 		return nil, err
@@ -117,6 +125,7 @@ func (c *Client) AddTask(task Task) ([]Task, error) {
 	}, nil
 }
 
+// CloseTask marks an existing task as complete, by ID
 func (c *Client) CloseTask(task Task) error {
 	if task.ID == 0 {
 		log.Fatal("invalid task id")
@@ -124,7 +133,8 @@ func (c *Client) CloseTask(task Task) error {
 
 	log.Printf("closing %d", task.ID)
 
-	resp, err := c.Request().Post(c.Endpoint("tasks", strconv.Itoa(task.ID), "close"))
+	path := c.GetEndpoint("tasks", strconv.Itoa(task.ID), "close")
+	resp, err := c.Request().Post(path)
 	if err != nil {
 		log.Fatalf("error adding task: %s", err.Error())
 	}

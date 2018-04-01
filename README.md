@@ -1,6 +1,6 @@
 # togo
 
-CLI for Todoist's v8 API written in Go.
+CLI for [Todoist's](https://todoist.com) [v8 API](https://developer.todoist.com/rest/v8/) written in Go.
 
 ## Build
 

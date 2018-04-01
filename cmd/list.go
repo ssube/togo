@@ -16,8 +16,15 @@ func init() {
 		Short: "list pending tasks",
 		Args:  cobra.RangeArgs(0, 8),
 		Run: func(cmd *cobra.Command, args []string) {
-			filter := strings.Join(args, " & ")
-			tasks, _ := rootClient.GetTasks(project, filter, labels...)
+			labelTags := make([]string, len(labels))
+			for i, l := range labels {
+				if strings.HasPrefix(l, "@") {
+					labelTags[i] = l
+				} else {
+					labelTags[i] = "@" + l
+				}
+			}
+			tasks, _ := rootClient.GetTasks(project, args, labels)
 			client.PrintTasks(tasks)
 		},
 	}

@@ -72,7 +72,7 @@ func (c *Client) Parse(data []byte) ([]Task, error) {
 }
 
 // GetTasks lists incomplete and recurring tasks
-func (c *Client) GetTasks(project string, filter string, labels ...string) ([]Task, error) {
+func (c *Client) GetTasks(project string, required []string, optionals []string) ([]Task, error) {
 	r := c.Request()
 
 	if project != "" {
@@ -80,18 +80,17 @@ func (c *Client) GetTasks(project string, filter string, labels ...string) ([]Ta
 	}
 
 	// build the filters
-	filterComps := make([]string, 0)
+	filter := make([]string, 0)
 
-	if len(filter) > 0 {
-		filterComps = append(filterComps, filter)
+	if len(required) > 0 {
+		filter = append(filter, "("+strings.Join(required, " & ")+")")
 	}
 
-	if len(labels) > 0 {
-		labelFilter := "@" + strings.Join(labels, " | @")
-		filterComps = append(filterComps, labelFilter)
+	if len(optionals) > 0 {
+		filter = append(filter, "("+strings.Join(optionals, " | ")+")")
 	}
 
-	r = r.SetQueryParam("filter", strings.Join(filterComps, " & "))
+	r = r.SetQueryParam("filter", strings.Join(filter, " & "))
 
 	resp, err := r.Get(c.GetEndpoint("tasks"))
 	if err != nil {

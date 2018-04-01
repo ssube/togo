@@ -58,8 +58,19 @@ $ togo list --project 03211 --labels computer,desk "search: monitor"
  01233          1  clean computer monitor
 ```
 
-The `project` is used to filter a single project, `labels` are applied with an `|` operator, and additional arguments
-are assembled into a filter with `&`.
+The `project` parameter only lists tasks from a single project, `labels` are applied with an `|` operator, and
+any trailing arguments are passed as an `&` filter.
+
+[Filters are documented here](https://support.todoist.com/hc/en-us/articles/205248842) and limited to Todoist Premium.
+If no filter is provided, the parameter is omitted, which is equivalent to `"all"`. Labels are combined with the `|`
+operator. Additional filters are wrapped in parentheses and joined with `&`. In examples:
+
+|                       options |                        filter |
+| ----------------------------- | ----------------------------- |
+|            `--labels foo,bar` |                 `@foo | @bar` |
+|               `"search: foo"` |               `"search: foo"` |
+|  `--labels foo "search: bar"` |    `(@foo) & ("search: bar")` |
+|   `"overdue | today" "#Work"` | `(overdue | today) & (#Work)` |
 
 ### Add
 

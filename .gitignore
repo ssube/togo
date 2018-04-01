@@ -1,0 +1,5 @@
+# go output
+togo
+
+# go vendor
+vendor/

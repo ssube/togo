@@ -10,6 +10,7 @@ import (
 )
 
 type Config struct {
+	Root  string
 	Token string
 }
 

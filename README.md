@@ -16,13 +16,49 @@ togo expects a `~/.togo.yml` file to exist in the current user's home directory.
 The config file should contain:
 
 ```yaml
-token: api-token
+root: "https://beta.todoist.com/API/v8"
+token: "api-token"
 ```
 
-## Run
+You can find your API token [on the Integrations page](https://todoist.com/Users/viewPrefs?page=integrations).
+
+## Usage
+
+togo can list and complete pending tasks, as well as add new tasks.
+
+### List
+
+List incomplete tasks:
 
 ```shell
-togo list
-togo add "task"
-togo done "task"
+$ togo list
+
+    id   priority  content
+ 01231          1  clean desk
+ 01232          1  update gitlab
+ 01233          1  clean computer monitor
+```
+
+### Add
+
+Add a new task:
+
+```shell
+$ togo add --content "task"
+
+    id   priority  content
+ 01234          1  hello world
+```
+
+### Done
+
+Complete an existing task, by id:
+
+```shell
+$ togo done 01231 01232 01233 01234
+
+closing 01231
+closing 01232
+closing 01233
+closing 01234
 ```

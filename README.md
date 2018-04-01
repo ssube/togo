@@ -26,6 +26,16 @@ You can find your API token [on the Integrations page](https://todoist.com/Users
 
 togo can list and complete pending tasks, as well as add new tasks.
 
+### To Go
+
+Count incomplete tasks:
+
+```shell
+$ togo
+
+3 tasks to go
+```
+
 ### List
 
 List incomplete tasks:

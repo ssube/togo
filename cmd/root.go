@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -14,7 +13,8 @@ var rootCmd = &cobra.Command{
 	Use:   "togo",
 	Short: "togo is a todoist client in go",
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println("root cmd")
+		tasks, _ := rootClient.GetTasks()
+		fmt.Printf("%d tasks to go", len(tasks))
 	},
 }
 

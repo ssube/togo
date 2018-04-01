@@ -1,0 +1,22 @@
+stages:
+  - build
+
+build:image:
+  stage: build
+  image: docker
+  services:
+    - docker:dind
+  tags:
+    - runner:k8s
+  script:
+    # prep secrets
+    - mkdir /root/.docker
+    - ln -s /secrets/docker /root/.docker/config.json
+    - docker info
+    # build it
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://localhost:2375
+    IMAGE_TAG: ssube/togo:$CI_COMMIT_REF_SLUG

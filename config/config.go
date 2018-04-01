@@ -37,5 +37,4 @@ func New(name string) *Config {
 	}
 
 	return config
-
 }

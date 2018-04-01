@@ -13,7 +13,5 @@ func main() {
 	log.SetFlags(0)
 
 	client := client.New(config)
-	client.GetTasks()
-
-	cmd.Execute()
+	cmd.Execute(client)
 }

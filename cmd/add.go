@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/ssube/togo/client"
 )
 
 func init() {
@@ -16,6 +17,6 @@ var addCmd = &cobra.Command{
 	Long:  `All software has versions. This is Hugo's`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Hugo Static Site Generator v0.9 -- HEAD")
-		// client.AddTask("")
+		rootClient.AddTask(client.Task{})
 	},
 }

@@ -17,8 +17,10 @@ type Client struct {
 }
 
 type Task struct {
-	Content string
-	Order   int
+	Content  string
+	ID       int
+	Order    int
+	Priority int
 }
 
 func New(config *config.Config) *Client {
@@ -45,13 +47,11 @@ func (c *Client) Parse(data []byte) ([]Task, error) {
 	return out, err
 }
 
-func (c *Client) GetTasks() {
+func (c *Client) GetTasks() ([]Task, error) {
 	resp, err := c.Request().Get(c.Endpoint("tasks"))
 	if err != nil {
 		log.Fatalf("error listing tasks: %s", err.Error())
 	}
-
-	log.Printf("status: %s", resp.Status())
 
 	tasks, err := c.Parse(resp.Body())
 	if err != nil {
@@ -62,12 +62,10 @@ func (c *Client) GetTasks() {
 		return tasks[i].Order < tasks[j].Order
 	})
 
-	for _, task := range tasks {
-		log.Printf("%v", task)
-	}
+	return tasks, nil
 }
 
-func (c *Client) AddTask() {
+func (c *Client) AddTask(task Task) error {
 	resp, err := c.Request().Post(c.Endpoint("tasks"))
 	if err != nil {
 		log.Fatalf("error adding task: %s", err.Error())
@@ -80,4 +78,6 @@ func (c *Client) AddTask() {
 
 	log.Printf("status: %s", resp.Status())
 	log.Printf("body: %s", body)
+
+	return nil
 }

@@ -26,7 +26,20 @@ You can find your API token [on the Integrations page](https://todoist.com/Users
 
 togo can list and complete pending tasks, as well as add new tasks.
 
-### To Go
+You can run togo as a binary (build and copy to `/usr/local/bin`) or from a Docker container (mounting the config):
+
+```shell
+$ docker run -it -v ${HOME}:/root:ro ssube/togo:master list
+
+    ID   Priority  Content
+...
+```
+
+### Count
+
+```none
+togo
+```
 
 Count incomplete tasks:
 
@@ -85,18 +98,28 @@ operator. Additional filters are wrapped in parentheses and joined with `&`. In 
 
 ### Add
 
+```none
+togo add [content...]
+```
+
 Add a new task:
 
 ```shell
-$ togo add --content "task"
+$ togo add "task"
 
     id   priority  content
  01234          1  hello world
 ```
 
+Trailing arguments are merged with `" "` (a space).
+
 ### Done
 
-Complete an existing task, by id:
+```none
+togo done [id...]
+```
+
+Complete a task:
 
 ```shell
 $ togo done 01231 01232 01233 01234

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -28,7 +29,10 @@ func init() {
 					labelTags[i] = "@" + l
 				}
 			}
-			tasks, _ := rootClient.GetTasks(project, args, labels)
+			tasks, err := rootClient.GetTasks(project, args, labels)
+			if err != nil {
+				log.Fatalf("error listing tasks: %s", err.Error())
+			}
 			client.PrintTasks(tasks, columns)
 		},
 	}

@@ -1,13 +1,35 @@
 stages:
   - build
+  - image
+
+build:go:
+  stage: build
+  image: andrexus/golang-dep
+  tags:
+    - runner:k8s
+    - compute:high
+  script:
+    - dep ensure
+    - go build
+
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - togo
+  cache:
+    paths:
+      - vendor
 
 build:image:
-  stage: build
+  stage: image
   image: docker
   services:
     - docker:dind
   tags:
     - runner:k8s
+  
+  dependencies:
+    - build:go
   script:
     # prep secrets
     - mkdir /root/.docker

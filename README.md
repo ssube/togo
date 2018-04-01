@@ -39,7 +39,7 @@ $ togo
 ### List
 
 ```none
-togo list [--project project_id] [--labels label1,label2,label3] [filter...]
+togo list [--columns col1,col2] [--project project_id] [--labels label1,label2,label3] [filter...]
 ```
 
 List incomplete tasks:
@@ -47,15 +47,26 @@ List incomplete tasks:
 ```shell
 $ togo list
 
-    id   priority  content
+    ID   Priority  Content
  01231          1  clean desk
  01232          1  update gitlab
  01233          1  clean computer monitor
 
 $ togo list --project 03211 --labels computer,desk "search: monitor"
 
-    id   priority  content
+    ID   Priority  Content
  01233          1  clean computer monitor
+```
+
+The `columns` parameter selects fields from the tasks, in order, and displays them in a table with headers:
+
+```shell
+$ togo list --columns ID,Order
+
+    ID   Order
+ 01231       1
+ 01232       2
+ 01233       3
 ```
 
 The `project` parameter only lists tasks from a single project, `labels` are applied with an `|` operator, and
@@ -65,12 +76,12 @@ any trailing arguments are passed as an `&` filter.
 If no filter is provided, the parameter is omitted, which is equivalent to `"all"`. Labels are combined with the `|`
 operator. Additional filters are wrapped in parentheses and joined with `&`. In examples:
 
-|                       options |                        filter |
-| ----------------------------- | ----------------------------- |
-|            `--labels foo,bar` |                 `@foo | @bar` |
-|               `"search: foo"` |               `"search: foo"` |
-|  `--labels foo "search: bar"` |    `(@foo) & ("search: bar")` |
-|   `"overdue | today" "#Work"` | `(overdue | today) & (#Work)` |
+|                       options |                         filter |
+| ----------------------------- | ------------------------------ |
+|            `--labels foo,bar` |                 `@foo \| @bar` |
+|               `"search: foo"` |                `"search: foo"` |
+|  `--labels foo "search: bar"` |     `(@foo) & ("search: bar")` |
+|  `"overdue \| today" "#Work"` | `(overdue \| today) & (#Work)` |
 
 ### Add
 

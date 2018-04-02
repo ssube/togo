@@ -29,6 +29,7 @@ build:image:
     - docker:dind
   tags:
     - runner:k8s
+    - cloud:aws
   
   dependencies:
     - build:go

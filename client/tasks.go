@@ -12,16 +12,8 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/ssube/togo/config"
-	"gopkg.in/resty.v1"
 	"gopkg.in/yaml.v2"
 )
-
-// Client for API
-type Client struct {
-	client *resty.Client
-	config *config.Config
-}
 
 // Task model from API
 type Task struct {
@@ -29,15 +21,6 @@ type Task struct {
 	ID       int    `json:"id" yaml:"id,omitempty"`
 	Order    int    `json:"order" yaml:"order,omitempty"`
 	Priority int    `json:"priority" yaml:"priority,omitempty"`
-}
-
-func Tabulate(cols []string) []interface{} {
-	tabs := make([]interface{}, len(cols)*2)
-	for i, c := range cols {
-		tabs[i*2] = c
-		tabs[(i*2)+1] = "\t"
-	}
-	return tabs
 }
 
 // PrintTasks in a table
@@ -68,31 +51,8 @@ func PrintTasks(tasks []Task, cols []string) {
 	w.Flush()
 }
 
-// New client
-func New(config *config.Config) *Client {
-	client := &Client{
-		client: resty.New(),
-		config: config,
-	}
-	return client
-}
-
-// GetEndpoint formats a partial path as an API endpoint
-func (c *Client) GetEndpoint(parts ...string) string {
-	path := []string{
-		c.config.Root,
-	}
-
-	return strings.Join(append(path, parts...), "/")
-}
-
-// Request an API endpoint with authorization
-func (c *Client) Request() *resty.Request {
-	return c.client.R().SetHeader("Authorization", fmt.Sprintf("Bearer %s", c.config.Token))
-}
-
 // Parse a reponse into list of tasks
-func (c *Client) Parse(data []byte) ([]Task, error) {
+func ParseTasks(data []byte) ([]Task, error) {
 	out := make([]Task, 0)
 	err := yaml.Unmarshal(data, &out)
 
@@ -131,7 +91,7 @@ func (c *Client) GetTasks(project string, required []string, optionals []string)
 		return nil, errors.New("unexpected status code")
 	}
 
-	tasks, err := c.Parse(resp.Body())
+	tasks, err := ParseTasks(resp.Body())
 	if err != nil {
 		log.Printf("error parsing tasks: %s", err.Error())
 		return nil, err

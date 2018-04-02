@@ -130,6 +130,24 @@ closing 01233
 closing 01234
 ```
 
+### Projects
+
+```none
+togo projects
+```
+
+List projects:
+
+```shell
+$ todo projects
+
+     ID  Name
+  01231  Inbox
+  01232  Personal
+```
+
+Project IDs may be used with `list --project`.
+
 ## Todo
 
 Features:
@@ -137,5 +155,7 @@ Features:
 - [x] labels
 - [x] filters
 - [x] custom columns
+- [x] list projects
 - [ ] sort order
-- [ ] list projects
+- [ ] add project
+- [ ] add labels

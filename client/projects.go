@@ -25,7 +25,7 @@ func ParseProjects(data []byte) ([]Project, error) {
 }
 
 func PrintProjects(projects []Project) {
-	w := tabwriter.NewWriter(os.Stdout, 4, 2, 1, ' ', tabwriter.AlignRight)
+	w := tabwriter.NewWriter(os.Stdout, 4, 2, 2, ' ', 0)
 	fmt.Fprintln(w, "ID", "\t", "Name")
 
 	// prepare a slice for cols and tabs

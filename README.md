@@ -107,8 +107,8 @@ Add a new task:
 ```shell
 $ togo add "task"
 
-    id   priority  content
- 01234          1  hello world
+    ID  Content
+ 01234  hello world
 ```
 
 Trailing arguments are merged with `" "` (a space).

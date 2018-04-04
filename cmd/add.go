@@ -9,7 +9,10 @@ import (
 )
 
 func init() {
-	columns := []string{}
+	columns := []string{
+		"ID",
+		"Content",
+	}
 
 	addCmd := &cobra.Command{
 		Use:   "add",

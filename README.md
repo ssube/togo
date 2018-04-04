@@ -52,7 +52,7 @@ $ togo
 ### List
 
 ```none
-togo list [--columns col1,col2] [--project project_id] [--labels label1,label2,label3] [filter...]
+togo list [--columns col1,col2] [--labels label1,label2,label3] [--project project_id] [--sort col] [filter...]
 ```
 
 List incomplete tasks:
@@ -64,6 +64,13 @@ $ togo list
  01231          1  clean desk
  01232          1  update gitlab
  01233          1  clean computer monitor
+
+$ togo list --sort Content
+
+    ID   Priority  Content
+ 01233          1  clean computer monitor
+ 01231          1  clean desk
+ 01232          1  update gitlab
 
 $ togo list --project 03211 --labels computer,desk "search: monitor"
 
@@ -160,6 +167,7 @@ Features:
 - [x] custom columns
 - [x] list projects
 - [x] sort order
+- [x] add complete
 - [ ] add project
 - [ ] add labels
 - [ ] test coverage

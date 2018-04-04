@@ -159,6 +159,7 @@ Features:
 - [x] filters
 - [x] custom columns
 - [x] list projects
-- [ ] sort order
+- [x] sort order
 - [ ] add project
 - [ ] add labels
+- [ ] test coverage

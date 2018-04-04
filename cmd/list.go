@@ -16,6 +16,7 @@ func init() {
 	}
 	labels := []string{}
 	project := ""
+	sort := "ID"
 
 	listCmd := &cobra.Command{
 		Use:   "list",
@@ -34,13 +35,14 @@ func init() {
 			if err != nil {
 				log.Fatalf("error listing tasks: %s", err.Error())
 			}
-			client.PrintTasks(os.Stdout, tasks, columns)
+			client.PrintTasks(os.Stdout, tasks, columns, sort)
 		},
 	}
 
 	listCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
 	listCmd.Flags().StringSliceVarP(&labels, "labels", "l", labels, "filter tasks with selected task labels")
 	listCmd.Flags().StringVarP(&project, "project", "p", project, "project from which to list tasks")
+	listCmd.Flags().StringVarP(&sort, "sort", "s", sort, "sort column")
 
 	rootCmd.AddCommand(listCmd)
 }

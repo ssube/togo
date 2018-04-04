@@ -15,6 +15,7 @@ func init() {
 		"Content",
 	}
 	done := false
+	sort := "ID"
 
 	addCmd := &cobra.Command{
 		Use:   "add",
@@ -27,7 +28,7 @@ func init() {
 			if err != nil {
 				log.Printf("error adding task: %s", err.Error())
 			}
-			client.PrintTasks(os.Stdout, tasks, columns)
+			client.PrintTasks(os.Stdout, tasks, columns, sort)
 			if done {
 				// this should be a single item
 				for _, t := range tasks {
@@ -39,6 +40,7 @@ func init() {
 
 	addCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
 	addCmd.Flags().BoolVarP(&done, "done", "d", done, "complete the task immediately")
+	addCmd.Flags().StringVarP(&sort, "sort", "s", sort, "sort column")
 
 	rootCmd.AddCommand(addCmd)
 }

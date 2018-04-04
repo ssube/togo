@@ -23,8 +23,26 @@ type Task struct {
 }
 
 // PrintTasks in a table
-func PrintTasks(f *os.File, tasks []Task, cols []string) {
+func PrintTasks(f *os.File, tasks []Task, cols []string, sortCol string) {
 	w := PrintTable(f, cols)
+
+	// sort
+	headTask := tasks[0]
+	sortField := reflect.ValueOf(&headTask).Elem().FieldByName(sortCol)
+
+	if !sortField.IsValid() {
+		log.Fatalf("missing sort column: %s", sortCol)
+	}
+
+	sort.Slice(tasks, func(i, j int) bool {
+		it := tasks[i]
+		jt := tasks[j]
+
+		is := reflect.ValueOf(&it).Elem().FieldByName(sortCol).String()
+		js := reflect.ValueOf(&jt).Elem().FieldByName(sortCol).String()
+
+		return is < js
+	})
 
 	// prepare a slice for cols and tabs
 	taskCols := make([]string, len(cols))

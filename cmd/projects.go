@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/ssube/togo/client"
@@ -16,7 +17,7 @@ func init() {
 			if err != nil {
 				log.Printf("error adding task: %s", err.Error())
 			}
-			client.PrintProjects(projects)
+			client.PrintProjects(os.Stdout, projects)
 		},
 	}
 

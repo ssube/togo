@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -33,7 +34,7 @@ func init() {
 			if err != nil {
 				log.Fatalf("error listing tasks: %s", err.Error())
 			}
-			client.PrintTasks(tasks, columns)
+			client.PrintTasks(os.Stdout, tasks, columns)
 		},
 	}
 

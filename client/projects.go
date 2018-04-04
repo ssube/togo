@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"text/tabwriter"
+	"strconv"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -24,13 +24,19 @@ func ParseProjects(data []byte) ([]Project, error) {
 	return out, err
 }
 
-func PrintProjects(projects []Project) {
-	w := tabwriter.NewWriter(os.Stdout, 4, 2, 2, ' ', 0)
-	fmt.Fprintln(w, "ID", "\t", "Name")
+func PrintProjects(f *os.File, projects []Project) {
+	cols := []string{
+		"ID",
+		"Name",
+	}
+	w := PrintTable(f, cols)
 
 	// prepare a slice for cols and tabs
 	for _, p := range projects {
-		fmt.Fprintln(w, p.ID, "\t", p.Name)
+		fmt.Fprintln(w, Tabulate([]string{
+			strconv.Itoa(p.ID),
+			p.Name,
+		})...)
 	}
 
 	w.Flush()

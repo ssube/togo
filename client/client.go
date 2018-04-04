@@ -2,7 +2,9 @@ package client
 
 import (
 	"fmt"
+	"os"
 	"strings"
+	"text/tabwriter"
 
 	"github.com/ssube/togo/config"
 	"gopkg.in/resty.v1"
@@ -21,6 +23,12 @@ func Tabulate(cols []string) []interface{} {
 		tabs[(i*2)+1] = "\t"
 	}
 	return tabs
+}
+
+func PrintTable(f *os.File, cols []string) *tabwriter.Writer {
+	w := tabwriter.NewWriter(f, 4, 2, 2, ' ', 0)
+	fmt.Fprintln(w, Tabulate(cols)...)
+	return w
 }
 
 // New client

@@ -10,7 +10,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 
 	"gopkg.in/yaml.v2"
 )
@@ -24,9 +23,8 @@ type Task struct {
 }
 
 // PrintTasks in a table
-func PrintTasks(tasks []Task, cols []string) {
-	w := tabwriter.NewWriter(os.Stdout, 4, 2, 2, ' ', 0)
-	fmt.Fprintln(w, Tabulate(cols)...)
+func PrintTasks(f *os.File, tasks []Task, cols []string) {
+	w := PrintTable(f, cols)
 
 	// prepare a slice for cols and tabs
 	taskCols := make([]string, len(cols))

@@ -1,6 +1,7 @@
 stages:
   - build
   - image
+  - latest
 
 build:go:
   stage: build
@@ -23,26 +24,46 @@ build:go:
     paths:
       - vendor
 
-build:image:
-  stage: image
+# always build an image (tagged by branch), publish tags to latest
+.build:docker: &build-docker
   image: docker
   services:
     - docker:dind
   tags:
     - runner:k8s
     - cloud:aws
-  
-  dependencies:
-    - build:go
-  script:
+
+  before_script:
     # prep secrets
     - mkdir /root/.docker
     - ln -s /secrets/docker /root/.docker/config.json
     - docker info
-    # build it
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://localhost:2375
     IMAGE_TAG: ssube/togo:$CI_COMMIT_REF_SLUG
+ 
+build:image:
+  <<: *build-docker
+  stage: image
+ 
+  dependencies:
+    - build:go
+  script:
+    # build it
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+build:latest:
+  <<: *build-docker
+  stage: latest
+  only:
+    - tags
+
+  script:
+    # build it
+    - docker pull ssube/togo:master
+    - docker tag ssube/togo:master $IMAGE_TAG
+    - docker tag ssube/togo:master ssube/togo:latest
+    - docker push $IMAGE_TAG
+    - docker push ssube/togo:latest

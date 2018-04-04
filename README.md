@@ -99,7 +99,7 @@ operator. Additional filters are wrapped in parentheses and joined with `&`. In 
 ### Add
 
 ```none
-togo add [content...]
+togo add [--done] [content...]
 ```
 
 Add a new task:
@@ -111,7 +111,10 @@ $ togo add "task"
  01234  hello world
 ```
 
-Trailing arguments are merged with `" "` (a space).
+Trailing arguments are merged with `" "` (a space), so loose words will be combined but special characters should be
+quoted.
+
+The `--done` parameter completes the task immediately after adding it.
 
 ### Done
 

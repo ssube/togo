@@ -56,8 +56,8 @@ build:go:linux-x86:
 build:go:windows-x86:
   <<: *go-job
   script:
-    - GOOS=windows GOARCH=386 go build -o bin/togo_windows-386
-    - GOOS=windows GOARCH=amd64 go build -o bin/togo_windows-amd64
+    - GOOS=windows GOARCH=386 go build -o bin/togo_windows-386.exe
+    - GOOS=windows GOARCH=amd64 go build -o bin/togo_windows-amd64.exe
 
 # always build an image (tagged by branch), publish tags to latest
 .build:docker: &build-docker

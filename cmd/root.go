@@ -13,8 +13,10 @@ var rootCmd = &cobra.Command{
 	Use:   "togo",
 	Short: "togo is a todoist client in go",
 	Run: func(cmd *cobra.Command, args []string) {
-		tasks, _ := rootClient.GetTasks("", []string{}, []string{})
-		fmt.Printf("%d tasks to go", len(tasks))
+		tasks, _ := rootClient.GetTasks("", []string{
+			"overdue | today",
+		}, []string{})
+		fmt.Printf("%d tasks to go\n", len(tasks))
 	},
 }
 

@@ -171,3 +171,5 @@ Features:
 - [ ] add project
 - [ ] add labels
 - [ ] test coverage
+- [ ] postpone task
+- [ ] edit task

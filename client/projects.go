@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"reflect"
-	"sort"
 	"strconv"
 
 	yaml "gopkg.in/yaml.v2"
@@ -28,24 +26,7 @@ func ParseProjects(data []byte) ([]Project, error) {
 
 func PrintProjects(f *os.File, projects []Project, cols []string, sortCol string) {
 	w := PrintTable(f, cols)
-
-	// sort
-	headProject := projects[0]
-	sortField := reflect.ValueOf(&headProject).Elem().FieldByName(sortCol)
-
-	if !sortField.IsValid() {
-		log.Fatalf("missing sort column: %s", sortCol)
-	}
-
-	sort.Slice(projects, func(i, j int) bool {
-		it := projects[i]
-		jt := projects[j]
-
-		is := reflect.ValueOf(&it).Elem().FieldByName(sortCol).String()
-		js := reflect.ValueOf(&jt).Elem().FieldByName(sortCol).String()
-
-		return is < js
-	})
+	SortField(projects, sortCol)
 
 	// prepare a slice for cols and tabs
 	for _, p := range projects {

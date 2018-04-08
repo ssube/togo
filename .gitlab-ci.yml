@@ -38,26 +38,26 @@ test:go:
 build:go:darwin-x86:
   <<: *go-job
   script:
-    - GOOS=darwin GOARCH=386 go build -o bin/togo_darwin-386
-    - GOOS=darwin GOARCH=amd64 go build -o bin/togo_darwin-amd64
+    - GOOS=darwin GOARCH=386 go build -o bin/togo-darwin-386
+    - GOOS=darwin GOARCH=amd64 go build -o bin/togo-darwin-amd64
 
 build:go:linux-arm:
   <<: *go-job
   script:
-    - GOOS=linux GOARCH=arm go build -o bin/togo_linux-arm
-    - GOOS=linux GOARCH=arm64 go build -o bin/togo_linux-arm64
+    - GOOS=linux GOARCH=arm go build -o bin/togo-linux-arm
+    - GOOS=linux GOARCH=arm64 go build -o bin/togo-linux-arm64
 
 build:go:linux-x86:
   <<: *go-job
   script:
-    - GOOS=linux GOARCH=386 go build -o bin/togo_linux-386
-    - GOOS=linux GOARCH=amd64 go build -o bin/togo_linux-amd64
+    - GOOS=linux GOARCH=386 go build -o bin/togo-linux-386
+    - GOOS=linux GOARCH=amd64 go build -o bin/togo-linux-amd64
 
 build:go:windows-x86:
   <<: *go-job
   script:
-    - GOOS=windows GOARCH=386 go build -o bin/togo_windows-386.exe
-    - GOOS=windows GOARCH=amd64 go build -o bin/togo_windows-amd64.exe
+    - GOOS=windows GOARCH=386 go build -o bin/togo-windows-386.exe
+    - GOOS=windows GOARCH=amd64 go build -o bin/togo-windows-amd64.exe
 
 # always build an image (tagged by branch), publish tags to latest
 .build:docker: &build-docker
@@ -131,7 +131,8 @@ bundle:
 
   script:
     - tar -cvf bin/togo_all.tgz bin/*
-    - gzip bin/*
+    - gzip bin/togo-darwin-*
+    - gzip bin/togo-linux-*
 
   artifacts:
     expire_in: 1 day

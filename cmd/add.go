@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ func init() {
 		"Content",
 	}
 	done := false
+	labels := []string{}
 	sort := "ID"
 
 	addCmd := &cobra.Command{
@@ -22,12 +24,37 @@ func init() {
 		Short: "add a task",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			tasks, err := rootClient.AddTask(client.Task{
+			task := client.Task{
 				Content: strings.Join(args, " "),
-			})
+			}
+
+			// resolve labels
+			if len(labels) > 0 {
+				labelIDs := make([]int, len(labels))
+				for i, l := range labels {
+					id, err := strconv.Atoi(l)
+					if err == nil {
+						labelIDs[i] = id
+						continue
+					}
+
+					label, err := rootClient.FindLabel(l)
+					if err != nil {
+						log.Fatalf("error getting labels: %s", err.Error())
+					}
+
+					labelIDs[i] = label.ID
+				}
+
+				task.Labels = labelIDs
+			}
+
+			// add task
+			tasks, err := rootClient.AddTask(task)
 			if err != nil {
 				log.Printf("error adding task: %s", err.Error())
 			}
+
 			client.PrintTasks(os.Stdout, tasks, columns, sort)
 			if done {
 				// this should be a single item
@@ -40,6 +67,7 @@ func init() {
 
 	addCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
 	addCmd.Flags().BoolVarP(&done, "done", "d", done, "complete the task immediately")
+	addCmd.Flags().StringSliceVarP(&labels, "labels", "l", labels, "task labels")
 	addCmd.Flags().StringVarP(&sort, "sort", "s", sort, "sort column")
 
 	rootCmd.AddCommand(addCmd)

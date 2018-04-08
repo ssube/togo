@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -18,8 +17,10 @@ import (
 type Task struct {
 	Content  string `json:"content" yaml:"content"`
 	ID       int    `json:"id" yaml:"id,omitempty"`
+	Labels   []int  `json:"label_ids" yaml:"label_ids"`
 	Order    int    `json:"order" yaml:"order,omitempty"`
 	Priority int    `json:"priority" yaml:"priority,omitempty"`
+	Project  int    `json:"project_id" yaml:"project_id"`
 }
 
 // PrintTasks in a table
@@ -28,30 +29,9 @@ func PrintTasks(f *os.File, tasks []Task, cols []string, sortCol string) {
 	SortField(tasks, sortCol)
 
 	// prepare a slice for cols and tabs
-	taskCols := make([]string, len(cols))
 	for _, t := range tasks {
-		vc := reflect.ValueOf(&t)
-
-		for i, c := range cols {
-			field := vc.Elem().FieldByName(c)
-
-			if !field.IsValid() {
-				log.Fatalf("missing column: %s", c)
-			}
-
-			ftype := field.Type()
-			fkind := ftype.Kind()
-
-			switch fkind {
-			case reflect.Int:
-				taskCols[i] = strconv.FormatInt(field.Int(), 10)
-			case reflect.String:
-				taskCols[i] = field.String()
-			default:
-				taskCols[i] = "."
-			}
-		}
-		fmt.Fprintln(w, Tabulate(taskCols)...)
+		fields := GetFields(&t, cols)
+		fmt.Fprintln(w, Tabulate(fields)...)
 	}
 
 	w.Flush()

@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 
@@ -32,6 +33,36 @@ func PrintTable(f *os.File, cols []string) *tabwriter.Writer {
 	w := tabwriter.NewWriter(f, 4, 2, 2, ' ', 0)
 	fmt.Fprintln(w, Tabulate(cols)...)
 	return w
+}
+
+func GetFields(val interface{}, cols []string) []string {
+	out := make([]string, len(cols))
+	rv := reflect.ValueOf(val).Elem()
+
+	for i, c := range cols {
+		field := rv.FieldByName(c)
+
+		if !field.IsValid() {
+			log.Fatalf("missing column: %s", c)
+		}
+
+		ftype := field.Type()
+		fkind := ftype.Kind()
+
+		switch fkind {
+		case reflect.Int:
+			out[i] = strconv.FormatInt(field.Int(), 10)
+		case reflect.String:
+			out[i] = field.String()
+		case reflect.Slice:
+			out[i] = fmt.Sprintf("%v", field)
+		default:
+			log.Printf("unknown type for column %s: %v", c, ftype)
+			out[i] = "."
+		}
+	}
+
+	return out
 }
 
 func SortField(vals interface{}, col string) {

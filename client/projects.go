@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -30,10 +29,8 @@ func PrintProjects(f *os.File, projects []Project, cols []string, sortCol string
 
 	// prepare a slice for cols and tabs
 	for _, p := range projects {
-		fmt.Fprintln(w, Tabulate([]string{
-			strconv.Itoa(p.ID),
-			p.Name,
-		})...)
+		fields := GetFields(&p, cols)
+		fmt.Fprintln(w, Tabulate(fields)...)
 	}
 
 	w.Flush()

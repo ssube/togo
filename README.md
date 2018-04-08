@@ -183,3 +183,9 @@ Features:
 - [ ] edit task
 - [ ] postpone task
 - [ ] create config
+
+## Legal
+
+togo was written by [ssube](https://github.com/ssube) and is not created by, affiliated with, or supported by Doist.
+
+Source, documentation, and everything else in this repository is distributed under the included MIT license.

@@ -36,6 +36,21 @@ func PrintProjects(f *os.File, projects []Project, cols []string, sortCol string
 	w.Flush()
 }
 
+func (c *Client) FindProject(name string) (Project, error) {
+	projects, err := c.GetProjects()
+	if err != nil {
+		return Project{}, err
+	}
+
+	for _, p := range projects {
+		if p.Name == name {
+			return p, nil
+		}
+	}
+
+	return Project{}, errors.New("project not found")
+}
+
 func (c *Client) GetProjects() ([]Project, error) {
 	resp, err := c.Request().Get(c.GetEndpoint("projects"))
 	if err != nil {

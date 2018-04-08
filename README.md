@@ -176,9 +176,11 @@ Features:
 - [x] sort order
 - [x] add task & complete
 - [x] custom root filter
-- [ ] add task project
-- [ ] list labels
-- [ ] add task labels
+- [x] add task project
+- [x] list labels
+- [x] add task labels
+- [ ] list project names
+- [ ] list label names
 - [ ] test coverage
 - [ ] edit task
 - [ ] postpone task

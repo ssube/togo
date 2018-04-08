@@ -17,6 +17,7 @@ func init() {
 	}
 	done := false
 	labels := []string{}
+	project := ""
 	sort := "ID"
 
 	addCmd := &cobra.Command{
@@ -49,6 +50,16 @@ func init() {
 				task.Labels = labelIDs
 			}
 
+			// resolve project
+			if project != "" {
+				project, err := rootClient.FindProject(project)
+				if err != nil {
+					log.Fatalf("error getting projects: %s", err.Error())
+				}
+
+				task.Project = project.ID
+			}
+
 			// add task
 			tasks, err := rootClient.AddTask(task)
 			if err != nil {
@@ -68,6 +79,7 @@ func init() {
 	addCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
 	addCmd.Flags().BoolVarP(&done, "done", "d", done, "complete the task immediately")
 	addCmd.Flags().StringSliceVarP(&labels, "labels", "l", labels, "task labels")
+	addCmd.Flags().StringVarP(&project, "project", "p", project, "task project")
 	addCmd.Flags().StringVarP(&sort, "sort", "s", sort, "sort column")
 
 	rootCmd.AddCommand(addCmd)

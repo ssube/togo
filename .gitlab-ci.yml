@@ -1,7 +1,7 @@
 stages:
   - build
   - image
-  - latest
+  - tag
 
 build:go:
   stage: build
@@ -54,16 +54,27 @@ build:image:
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
 
-build:latest:
+# tag releases
+tag:latest:
   <<: *build-docker
-  stage: latest
+  stage: tag
+  only:
+    - master
+
+  script:
+    # build it
+    - docker pull ssube/togo:master
+    - docker tag ssube/togo:master ssube/togo:latest
+    - docker push ssube/togo:latest
+
+tag:version:
+  <<: *build-docker
+  stage: tag
   only:
     - tags
 
   script:
     # build it
     - docker pull ssube/togo:master
-    - docker tag ssube/togo:master $IMAGE_TAG
-    - docker tag ssube/togo:master ssube/togo:latest
-    - docker push $IMAGE_TAG
-    - docker push ssube/togo:latest
+    - docker tag ssube/togo:master ssube/togo:${CI_COMMIT_TAG}
+    - docker push ssube/togo:${CI_COMMIT_TAG}

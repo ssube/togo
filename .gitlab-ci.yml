@@ -34,18 +34,21 @@ build:go:darwin-x86:
   script:
     - GOOS=darwin GOARCH=386 go build -o bin/togo_linux-386
     - GOOS=darwin GOARCH=amd64 go build -o bin/togo_linux-amd64
+    - gzip bin/*
 
 build:go:linux-arm:
   <<: *go-job
   script:
     - GOOS=linux GOARCH=arm go build -o bin/togo_linux-arm
     - GOOS=linux GOARCH=arm64 go build -o bin/togo_linux-arm64
+    - gzip bin/*
 
 build:go:linux-x86:
   <<: *go-job
   script:
     - GOOS=linux GOARCH=386 go build -o bin/togo_linux-386
     - GOOS=linux GOARCH=amd64 go build -o bin/togo_linux-amd64
+    - gzip bin/*
 
 # always build an image (tagged by branch), publish tags to latest
 .build:docker: &build-docker

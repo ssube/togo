@@ -174,3 +174,4 @@ Features:
 - [ ] test coverage
 - [ ] edit task
 - [ ] postpone task
+- [ ] create config

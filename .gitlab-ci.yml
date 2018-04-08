@@ -21,21 +21,25 @@ stages:
     expire_in: 1 hour
     paths:
       - bin/
-  cache:
+  cache: &go-cache
     paths:
       - vendor
+    policy: pull
 
 test:go:
   <<: *go-job
   stage: test
   script:
     - go test -cover ./...
+  cache:
+    <<: *go-cache
+    policy: pull-push
 
 build:go:darwin-x86:
   <<: *go-job
   script:
-    - GOOS=darwin GOARCH=386 go build -o bin/togo_linux-386
-    - GOOS=darwin GOARCH=amd64 go build -o bin/togo_linux-amd64
+    - GOOS=darwin GOARCH=386 go build -o bin/togo_darwin-386
+    - GOOS=darwin GOARCH=amd64 go build -o bin/togo_darwin-amd64
 
 build:go:linux-arm:
   <<: *go-job
@@ -52,8 +56,8 @@ build:go:linux-x86:
 build:go:windows-x86:
   <<: *go-job
   script:
-    - GOOS=windows GOARCH=386 go build -o bin/togo_linux-386
-    - GOOS=windows GOARCH=amd64 go build -o bin/togo_linux-amd64
+    - GOOS=windows GOARCH=386 go build -o bin/togo_windows-386
+    - GOOS=windows GOARCH=amd64 go build -o bin/togo_windows-amd64
 
 # always build an image (tagged by branch), publish tags to latest
 .build:docker: &build-docker
@@ -113,6 +117,8 @@ tag:version:
 bundle:
   image: apextoaster/base:master
   stage: bundle
+  tags:
+    - runner:k8s
   only:
     - master
     - tags

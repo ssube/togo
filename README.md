@@ -169,7 +169,8 @@ Features:
 - [x] sort order
 - [x] add complete
 - [ ] add project
+- [ ] list labels
 - [ ] add labels
 - [ ] test coverage
-- [ ] postpone task
 - [ ] edit task
+- [ ] postpone task

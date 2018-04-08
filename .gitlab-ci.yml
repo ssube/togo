@@ -1,28 +1,51 @@
 stages:
+  - test
   - build
   - image
   - tag
 
-build:go:
+.build:go: &go-job
   stage: build
   image: andrexus/golang-dep
   tags:
     - runner:k8s
     - compute:high
-  script:
-    - dep ensure
-    - go build
-    - go test -cover ./...
   variables:
     GOPATH: /build
 
+  before_script:
+    - dep ensure
   artifacts:
     expire_in: 1 hour
     paths:
-      - togo
+      - bin/
   cache:
     paths:
       - vendor
+
+test:go:
+  <<: *go-job
+  stage: test
+  script:
+    - go test -cover ./...
+
+build:go:darwin-x86:
+  <<: *go-job
+  script:
+    - GOOS=darwin GOARCH=386 go build -o bin/togo_linux-386
+    - GOOS=darwin GOARCH=amd64 go build -o bin/togo_linux-amd64
+
+build:go:linux-arm:
+  <<: *go-job
+  script:
+    - GOOS=linux GOARCH=arm go build -o bin/togo_linux-arm
+    - GOOS=linux GOARCH=arm64 go build -o bin/togo_linux-arm64
+
+build:go:linux-x86:
+  <<: *go-job
+  script:
+    - GOOS=linux GOARCH=386 go build -o bin/togo_linux-386
+    - GOOS=linux GOARCH=amd64 go build -o bin/togo_linux-amd64
 
 # always build an image (tagged by branch), publish tags to latest
 .build:docker: &build-docker
@@ -48,7 +71,7 @@ build:image:
   stage: image
  
   dependencies:
-    - build:go
+    - build:go:linux-x86
   script:
     # build it
     - docker build -t $IMAGE_TAG .

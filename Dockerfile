@@ -7,6 +7,6 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY ./togo /app/togo
+COPY ./bin/togo_linux-amd64 /app/togo
 
 ENTRYPOINT [ "/app/togo" ]

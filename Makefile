@@ -27,7 +27,7 @@ docker-retag:
 bundle-all:
 	# generate hash file
 	echo "path  bytes  sha256" | tee ./bin/hashes
-	find ./bin/ -type f -printf '%p  %s  ' -exec sh -c "sha256sum {} | cut -d ' ' -f 1;" \; | tee -a ./bin/hashes
+	find ./bin/ -type f -printf '%p  %s  ' -exec sh -c 'sha256sum $$1 | cut -d " " -f 1;' find-exec {} \; | tee -a ./bin/hashes
 	# compress
 	tar -cvf bin/togo-all.tgz ./bin/*
 	gzip ./bin/togo-darwin-* || true

@@ -20,6 +20,8 @@ type Client struct {
 	config *config.Config
 }
 
+// Tabulate an array of column names by inserting tabs between each
+// and converting to a Printf-compatible slice
 func Tabulate(cols []string) []interface{} {
 	tabs := make([]interface{}, len(cols)*2)
 	for i, c := range cols {
@@ -29,12 +31,14 @@ func Tabulate(cols []string) []interface{} {
 	return tabs
 }
 
-func PrintTable(f *os.File, cols []string) *tabwriter.Writer {
+// CreateTable with column headers and return a row writer
+func CreateTable(f *os.File, cols []string) *tabwriter.Writer {
 	w := tabwriter.NewWriter(f, 4, 2, 2, ' ', 0)
 	fmt.Fprintln(w, Tabulate(cols)...)
 	return w
 }
 
+// GetFields from a column list using reflection
 func GetFields(val interface{}, cols []string) []string {
 	out := make([]string, len(cols))
 	rv := reflect.ValueOf(val).Elem()
@@ -46,40 +50,41 @@ func GetFields(val interface{}, cols []string) []string {
 			log.Fatalf("missing column: %s", c)
 		}
 
-		ftype := field.Type()
-		fkind := ftype.Kind()
+		fieldType := field.Type()
+		fieldKind := fieldType.Kind()
 
-		switch fkind {
+		switch fieldKind {
 		case reflect.Int:
 			out[i] = strconv.FormatInt(field.Int(), 10)
 		case reflect.String:
 			out[i] = field.String()
 		case reflect.Slice:
-			out[i] = fmt.Sprintf("%v", field)
+			fallthrough
 		default:
-			log.Printf("unknown type for column %s: %v", c, ftype)
-			out[i] = "."
+			log.Printf("unknown type for column %s: %v", c, fieldType)
+			out[i] = fmt.Sprintf("%v", field)
 		}
 	}
 
 	return out
 }
 
-func SortField(vals interface{}, col string) {
-	vv := reflect.ValueOf(vals)
+// SortByField sorts the given slice of rows by the selected column
+func SortByField(rows interface{}, column string) {
+	vv := reflect.ValueOf(rows)
 	head := vv.Index(0)
-	sortField := head.FieldByName(col)
+	SortByField := head.FieldByName(column)
 
-	if !sortField.IsValid() {
-		log.Fatalf("missing sort column: %s", col)
+	if !SortByField.IsValid() {
+		log.Fatalf("missing sort column: %s", column)
 	}
 
-	sort.Slice(vals, func(i, j int) bool {
+	sort.Slice(rows, func(i, j int) bool {
 		it := vv.Index(i)
 		jt := vv.Index(j)
 
-		is := it.FieldByName(col).String()
-		js := jt.FieldByName(col).String()
+		is := it.FieldByName(column).String()
+		js := jt.FieldByName(column).String()
 
 		return is < js
 	})
@@ -108,10 +113,12 @@ func (c *Client) Request() *resty.Request {
 	return c.client.R().SetHeader("Authorization", fmt.Sprintf("Bearer %s", c.config.Token))
 }
 
+// Config used by this client
 func (c *Client) Config() *config.Config {
 	return c.config
 }
 
+// Columns to display based on command, config, and flags
 func (c *Client) Columns(cmdColumns []string, rootColumns []string, configColumns []string) []string {
 	if len(rootColumns) > 0 {
 		return rootColumns
@@ -121,6 +128,7 @@ func (c *Client) Columns(cmdColumns []string, rootColumns []string, configColumn
 	return cmdColumns
 }
 
+// Sort column based on command, config, and flags
 func (c *Client) Sort(cmdSort string, rootSort string, configSort string) string {
 	if len(rootSort) > 0 {
 		return rootSort

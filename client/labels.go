@@ -9,12 +9,15 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// Label model
+// https://developer.todoist.com/rest/v8/#labels
 type Label struct {
 	ID    int    `json:"id" yaml:"id"`
 	Name  string `json:"name" yaml:"name"`
 	Order int    `json:"order" yaml:"order"`
 }
 
+// ParseLabels from a byte array
 func ParseLabels(data []byte) ([]Label, error) {
 	out := make([]Label, 0)
 	err := yaml.Unmarshal(data, &out)
@@ -22,9 +25,10 @@ func ParseLabels(data []byte) ([]Label, error) {
 	return out, err
 }
 
+// PrintLabels after sorting, with column headers
 func PrintLabels(f *os.File, labels []Label, cols []string, sortCol string) {
-	w := PrintTable(f, cols)
-	SortField(labels, sortCol)
+	w := CreateTable(f, cols)
+	SortByField(labels, sortCol)
 
 	for _, l := range labels {
 		fields := GetFields(&l, cols)
@@ -34,6 +38,7 @@ func PrintLabels(f *os.File, labels []Label, cols []string, sortCol string) {
 	w.Flush()
 }
 
+// FindLabel by name
 func (c *Client) FindLabel(name string) (Label, error) {
 	labels, err := c.GetLabels()
 	if err != nil {
@@ -49,6 +54,7 @@ func (c *Client) FindLabel(name string) (Label, error) {
 	return Label{}, errors.New("label not found")
 }
 
+// GetLabels from API
 func (c *Client) GetLabels() ([]Label, error) {
 	resp, err := c.Request().Get(c.GetEndpoint("labels"))
 	if err != nil {

@@ -9,6 +9,8 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// Project model
+// https://developer.todoist.com/rest/v8/#projects
 type Project struct {
 	ID     int    `json:"id" yaml:"id"`
 	Indent int    `json:"indent" yaml:"indent"`
@@ -16,6 +18,7 @@ type Project struct {
 	Order  int    `json:"order" yaml:"order"`
 }
 
+// ParseProjects from byte array
 func ParseProjects(data []byte) ([]Project, error) {
 	out := make([]Project, 0)
 	err := yaml.Unmarshal(data, &out)
@@ -23,9 +26,10 @@ func ParseProjects(data []byte) ([]Project, error) {
 	return out, err
 }
 
+// PrintProjects after sorting, with column headers
 func PrintProjects(f *os.File, projects []Project, cols []string, sortCol string) {
-	w := PrintTable(f, cols)
-	SortField(projects, sortCol)
+	w := CreateTable(f, cols)
+	SortByField(projects, sortCol)
 
 	// prepare a slice for cols and tabs
 	for _, p := range projects {
@@ -36,6 +40,7 @@ func PrintProjects(f *os.File, projects []Project, cols []string, sortCol string
 	w.Flush()
 }
 
+// FindProject by name
 func (c *Client) FindProject(name string) (Project, error) {
 	projects, err := c.GetProjects()
 	if err != nil {
@@ -51,6 +56,7 @@ func (c *Client) FindProject(name string) (Project, error) {
 	return Project{}, errors.New("project not found")
 }
 
+// GetProjects from API
 func (c *Client) GetProjects() ([]Project, error) {
 	resp, err := c.Request().Get(c.GetEndpoint("projects"))
 	if err != nil {

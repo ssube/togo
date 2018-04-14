@@ -13,7 +13,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Task model from API
+// Task model
+// https://developer.todoist.com/rest/v8/#tasks
 type Task struct {
 	Content  string `json:"content" yaml:"content"`
 	ID       int    `json:"id" yaml:"id,omitempty"`
@@ -25,8 +26,8 @@ type Task struct {
 
 // PrintTasks in a table
 func PrintTasks(f *os.File, tasks []Task, cols []string, sortCol string) {
-	w := PrintTable(f, cols)
-	SortField(tasks, sortCol)
+	w := CreateTable(f, cols)
+	SortByField(tasks, sortCol)
 
 	// prepare a slice for cols and tabs
 	for _, t := range tasks {
@@ -37,7 +38,7 @@ func PrintTasks(f *os.File, tasks []Task, cols []string, sortCol string) {
 	w.Flush()
 }
 
-// Parse a reponse into list of tasks
+// ParseTasks from a byte array
 func ParseTasks(data []byte) ([]Task, error) {
 	out := make([]Task, 0)
 	err := yaml.Unmarshal(data, &out)

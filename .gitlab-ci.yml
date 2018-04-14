@@ -12,9 +12,10 @@ stages:
     - compute:high
   variables:
     GOPATH: /build
+    BUILD_OPTS: -a -v -x
 
   before_script:
-    - go clean
+    - go clean -x
     - dep ensure -v
 
   artifacts:
@@ -32,7 +33,7 @@ test:go:
   stage: test
   allow_failure: true # TODO: fix this once the tests compile
   script:
-    - go test -cover ./...
+    - go test ${BUILD_OPTS} -cover ./...
   cache:
     <<: *go-cache
     policy: pull-push
@@ -40,26 +41,26 @@ test:go:
 build:go:darwin-x86:
   <<: *go-job
   script:
-    - GOOS=darwin GOARCH=386 go build -o bin/togo-darwin-386
-    - GOOS=darwin GOARCH=amd64 go build -o bin/togo-darwin-amd64
+    - GOOS=darwin GOARCH=386 go build ${BUILD_OPTS} -o bin/togo-darwin-386
+    - GOOS=darwin GOARCH=amd64 go build ${BUILD_OPTS} -o bin/togo-darwin-amd64
 
 build:go:linux-arm:
   <<: *go-job
   script:
-    - GOOS=linux GOARCH=arm go build -o bin/togo-linux-arm
-    - GOOS=linux GOARCH=arm64 go build -o bin/togo-linux-arm64
+    - GOOS=linux GOARCH=arm go build ${BUILD_OPTS} -o bin/togo-linux-arm
+    - GOOS=linux GOARCH=arm64 go build ${BUILD_OPTS} -o bin/togo-linux-arm64
 
 build:go:linux-x86:
   <<: *go-job
   script:
-    - GOOS=linux GOARCH=386 go build -o bin/togo-linux-386
-    - GOOS=linux GOARCH=amd64 go build -o bin/togo-linux-amd64
+    - GOOS=linux GOARCH=386 go build ${BUILD_OPTS} -o bin/togo-linux-386
+    - GOOS=linux GOARCH=amd64 go build ${BUILD_OPTS} -o bin/togo-linux-amd64
 
 build:go:windows-x86:
   <<: *go-job
   script:
-    - GOOS=windows GOARCH=386 go build -o bin/togo-windows-386.exe
-    - GOOS=windows GOARCH=amd64 go build -o bin/togo-windows-amd64.exe
+    - GOOS=windows GOARCH=386 go build ${BUILD_OPTS} -o bin/togo-windows-386.exe
+    - GOOS=windows GOARCH=amd64 go build ${BUILD_OPTS} -o bin/togo-windows-amd64.exe
 
 # always build an image (tagged by branch), publish tags to latest
 .build:docker: &build-docker

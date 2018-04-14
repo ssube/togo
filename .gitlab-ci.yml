@@ -15,8 +15,7 @@ stages:
     BUILD_OPTS: -a -v -x
 
   before_script:
-    - go clean -x
-    - dep ensure -v
+    - make go-clean go-deps
 
   artifacts:
     expire_in: 1 hour
@@ -33,7 +32,7 @@ test:go:
   stage: test
   allow_failure: true # TODO: fix this once the tests compile
   script:
-    - go test ${BUILD_OPTS} -cover ./...
+    - make go-test
   cache:
     <<: *go-cache
     policy: pull-push
@@ -41,26 +40,26 @@ test:go:
 build:go:darwin-x86:
   <<: *go-job
   script:
-    - GOOS=darwin GOARCH=386 go build ${BUILD_OPTS} -o bin/togo-darwin-386
-    - GOOS=darwin GOARCH=amd64 go build ${BUILD_OPTS} -o bin/togo-darwin-amd64
+    - GOOS=darwin GOARCH=386 make go-build
+    - GOOS=darwin GOARCH=amd64 make go-build
 
 build:go:linux-arm:
   <<: *go-job
   script:
-    - GOOS=linux GOARCH=arm go build ${BUILD_OPTS} -o bin/togo-linux-arm
-    - GOOS=linux GOARCH=arm64 go build ${BUILD_OPTS} -o bin/togo-linux-arm64
+    - GOOS=linux GOARCH=arm make go-build
+    - GOOS=linux GOARCH=arm64 make go-build
 
 build:go:linux-x86:
   <<: *go-job
   script:
-    - GOOS=linux GOARCH=386 go build ${BUILD_OPTS} -o bin/togo-linux-386
-    - GOOS=linux GOARCH=amd64 go build ${BUILD_OPTS} -o bin/togo-linux-amd64
+    - GOOS=linux GOARCH=386 make go-build
+    - GOOS=linux GOARCH=amd64 make go-build
 
 build:go:windows-x86:
   <<: *go-job
   script:
-    - GOOS=windows GOARCH=386 go build ${BUILD_OPTS} -o bin/togo-windows-386.exe
-    - GOOS=windows GOARCH=amd64 go build ${BUILD_OPTS} -o bin/togo-windows-amd64.exe
+    - GOOS=windows GOARCH=386 make go-build
+    - GOOS=windows GOARCH=amd64 make go-build
 
 # always build an image (tagged by branch), publish tags to latest
 .build:docker: &build-docker
@@ -76,7 +75,7 @@ build:go:windows-x86:
     - mkdir /root/.docker
     - ln -s /secrets/docker /root/.docker/config.json
     - docker info
-  variables:
+  variables: &vars-docker
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://localhost:2375
     IMAGE_TAG: ssube/togo:$CI_COMMIT_REF_SLUG
@@ -99,11 +98,13 @@ tag:latest:
   only:
     - master
 
+  variables:
+    <<: *vars-docker
+    IMAGE_SRC: ssube/togo:master
+    IMAGE_DST: ssube/togo:latest
+
   script:
-    # build it
-    - docker pull ssube/togo:master
-    - docker tag ssube/togo:master ssube/togo:latest
-    - docker push ssube/togo:latest
+    - make docker-retag 
 
 tag:version:
   <<: *build-docker
@@ -111,11 +112,13 @@ tag:version:
   only:
     - tags
 
+  variables:
+    <<: *vars-docker
+    IMAGE_SRC: ssube/togo:master
+    IMAGE_DST: ssube/togo:${CI_COMMIT_TAG}
+
   script:
-    # build it
-    - docker pull ssube/togo:master
-    - docker tag ssube/togo:master ssube/togo:${CI_COMMIT_TAG}
-    - docker push ssube/togo:${CI_COMMIT_TAG}
+    - make docker-retag
 
 tag:bundle:
   image: apextoaster/base:master
@@ -133,9 +136,7 @@ tag:bundle:
     - build:go:windows-x86
 
   script:
-    - tar -cvf bin/togo_all.tgz bin/*
-    - gzip bin/togo-darwin-*
-    - gzip bin/togo-linux-*
+    - make bundle-all
 
   artifacts:
     expire_in: 1 day

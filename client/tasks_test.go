@@ -21,3 +21,20 @@ func TestPrintTasks(t *testing.T) {
 		"Content",
 	}, "Content")
 }
+
+func TestParseTasks(t *testing.T) {
+	data := `
+- id: 0
+  name: test
+`
+
+	tasks, err := ParseTasks([]byte(data))
+
+	if err != nil {
+		t.Fatalf("error parsing tasks: %s", err.Error())
+	}
+
+	if len(tasks) != 1 {
+		t.Fatalf("wrong number of tasks: %d", len(tasks))
+	}
+}

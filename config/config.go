@@ -10,6 +10,22 @@ import (
 )
 
 type Config struct {
+	Default struct {
+		Labels struct {
+			Columns []string
+			Sort    string
+		}
+		Projects struct {
+			Columns []string
+			Sort    string
+		}
+		Tasks struct {
+			Columns []string
+			Labels  []string
+			Project string
+			Sort    string
+		}
+	}
 	Root  string
 	Token string
 }

@@ -24,6 +24,7 @@ func ParseLabels(data []byte) ([]Label, error) {
 
 func PrintLabels(f *os.File, labels []Label, cols []string, sortCol string) {
 	w := PrintTable(f, cols)
+	SortField(labels, sortCol)
 
 	for _, l := range labels {
 		fields := GetFields(&l, cols)

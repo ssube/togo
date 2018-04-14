@@ -16,8 +16,8 @@ func init() {
 		"Content",
 	}
 	done := false
-	labels := []string{}
-	project := ""
+	labels := rootConfig.Default.Tasks.Labels
+	project := rootConfig.Default.Tasks.Project
 	sort := "ID"
 
 	addCmd := &cobra.Command{
@@ -66,6 +66,8 @@ func init() {
 				log.Printf("error adding task: %s", err.Error())
 			}
 
+			columns := rootClient.Columns(columns, rootColumns, rootClient.Config().Default.Projects.Columns)
+			sort := rootClient.Sort(sort, rootSort, rootClient.Config().Default.Projects.Sort)
 			client.PrintTasks(os.Stdout, tasks, columns, sort)
 			if done {
 				// this should be a single item
@@ -76,11 +78,9 @@ func init() {
 		},
 	}
 
-	addCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
 	addCmd.Flags().BoolVarP(&done, "done", "d", done, "complete the task immediately")
 	addCmd.Flags().StringSliceVarP(&labels, "labels", "l", labels, "task labels")
 	addCmd.Flags().StringVarP(&project, "project", "p", project, "task project")
-	addCmd.Flags().StringVarP(&sort, "sort", "s", sort, "sort column")
 
 	rootCmd.AddCommand(addCmd)
 }

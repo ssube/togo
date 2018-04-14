@@ -6,10 +6,19 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/ssube/togo/client"
+	"github.com/ssube/togo/config"
 )
 
-var rootFilter = "overdue | today"
+// client/config
+// TODO: make this less global :(
 var rootClient = &client.Client{}
+var rootConfig = &config.Config{}
+
+// flags
+var rootColumns = []string{}
+var rootFilter = "overdue | today"
+var rootSort = ""
+
 var rootCmd = &cobra.Command{
 	Use:   "togo",
 	Short: "togo is a todoist client in go",
@@ -21,8 +30,9 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func Execute(client *client.Client) {
+func Execute(client *client.Client, config *config.Config) {
 	rootClient = client
+	rootConfig = config
 
 	err := rootCmd.Execute()
 	if err != nil {
@@ -32,5 +42,7 @@ func Execute(client *client.Client) {
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&rootFilter, "filter", "f", rootFilter, "list filter")
+	rootCmd.PersistentFlags().StringSliceVarP(&rootColumns, "columns", "c", []string{}, "display columns")
+	rootCmd.PersistentFlags().StringVarP(&rootFilter, "filter", "f", rootFilter, "list filter")
+	rootCmd.PersistentFlags().StringVarP(&rootSort, "sort", "s", "", "sort column")
 }

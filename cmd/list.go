@@ -14,8 +14,8 @@ func init() {
 		"ID",
 		"Content",
 	}
-	labels := []string{}
-	project := ""
+	labels := rootConfig.Default.Tasks.Labels
+	project := rootConfig.Default.Tasks.Project
 	sort := "ID"
 
 	listCmd := &cobra.Command{
@@ -23,6 +23,7 @@ func init() {
 		Short: "list pending tasks",
 		Args:  cobra.RangeArgs(0, 8),
 		Run: func(cmd *cobra.Command, args []string) {
+
 			labelTags := make([]string, len(labels))
 			for i, l := range labels {
 				if strings.HasPrefix(l, "@") {
@@ -35,14 +36,15 @@ func init() {
 			if err != nil {
 				log.Fatalf("error listing tasks: %s", err.Error())
 			}
+
+			columns := rootClient.Columns(columns, rootColumns, rootClient.Config().Default.Tasks.Columns)
+			sort := rootClient.Sort(sort, rootSort, rootClient.Config().Default.Tasks.Sort)
 			client.PrintTasks(os.Stdout, tasks, columns, sort)
 		},
 	}
 
-	listCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
 	listCmd.Flags().StringSliceVarP(&labels, "labels", "l", labels, "filter tasks with selected task labels")
 	listCmd.Flags().StringVarP(&project, "project", "p", project, "project from which to list tasks")
-	listCmd.Flags().StringVarP(&sort, "sort", "s", sort, "sort column")
 
 	rootCmd.AddCommand(listCmd)
 }

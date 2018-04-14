@@ -13,7 +13,7 @@ func init() {
 		"ID",
 		"Name",
 	}
-	sort := "ID"
+	sort := "Name"
 
 	projectsCmd := &cobra.Command{
 		Use:   "projects",
@@ -23,12 +23,12 @@ func init() {
 			if err != nil {
 				log.Printf("error adding task: %s", err.Error())
 			}
+
+			columns := rootClient.Columns(columns, rootColumns, rootClient.Config().Default.Projects.Columns)
+			sort := rootClient.Sort(sort, rootSort, rootClient.Config().Default.Projects.Sort)
 			client.PrintProjects(os.Stdout, projects, columns, sort)
 		},
 	}
-
-	projectsCmd.Flags().StringSliceVarP(&columns, "columns", "c", columns, "display columns")
-	projectsCmd.Flags().StringVarP(&sort, "sort", "s", sort, "sort column")
 
 	rootCmd.AddCommand(projectsCmd)
 }

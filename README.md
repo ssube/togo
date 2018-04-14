@@ -27,14 +27,34 @@ token: "api-token"
 
 You can find your API token [on the Integrations page](https://todoist.com/Users/viewPrefs?page=integrations).
 
+You may also set the default columns and sort order for tables:
+
+```yaml
+default:
+  labels:
+    columns: [ID, Name]
+    sort: Name
+  projects:
+    columns: [ID, Name]
+    sort: Name
+  tasks:
+    columns: [ID, Content]
+    sort: ID
+```
+
+These defaults are used unless the `--columns` and `--sort` flags are passed. This section is optional; if omitted, the
+values shown above will be used.
+
 ## Usage
 
-togo can list and complete pending tasks, as well as add new tasks.
+```none
+togo [--columns col1,col2] [--sort col] cmd [flags...]
+```
 
-You can run togo as a binary (build and copy to `/usr/local/bin`) or from a Docker container (mounting the config):
+You can run togo as a binary or from a Docker container (mounting the config):
 
 ```shell
-$ docker run -it -v ${HOME}:/root:ro ssube/togo:master list
+$ docker run -it -v ${HOME}:/root:ro ssube/togo list
 
     ID   Priority  Content
 ...
@@ -59,7 +79,7 @@ Count uses the `--filter` parameter, defaulting to `today | overdue`.
 ### List
 
 ```none
-togo list [--columns col1,col2] [--labels label1,label2,label3] [--project project_id] [--sort col] [filter...]
+togo [options...] list [--labels label1,label2,label3] [--project project_id] [filter...]
 ```
 
 List incomplete tasks:
@@ -72,7 +92,7 @@ $ togo list
  01232          1  update gitlab
  01233          1  clean computer monitor
 
-$ togo list --sort Content
+$ togo --sort Content list
 
     ID   Priority  Content
  01233          1  clean computer monitor
@@ -88,7 +108,7 @@ $ togo list --project 03211 --labels computer,desk "search: monitor"
 The `columns` parameter selects fields from the tasks, in order, and displays them in a table with headers:
 
 ```shell
-$ togo list --columns ID,Order
+$ togo --columns ID,Order list
 
     ID   Order
  01231       1
@@ -179,6 +199,8 @@ Features:
 - [x] add task project
 - [x] list labels
 - [x] add task labels
+- [x] config defaults
+- [x] columns & sort on root
 - [ ] list project names
 - [ ] list label names
 - [ ] test coverage

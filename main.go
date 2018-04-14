@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-	config := config.New(".togo.yml")
+	userConfig := config.New(".togo.yml")
 	log.SetFlags(0)
 
-	client := client.New(config)
-	cmd.Execute(client)
+	client := client.New(userConfig)
+	cmd.Execute(client, userConfig)
 }

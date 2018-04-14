@@ -107,3 +107,25 @@ func (c *Client) GetEndpoint(parts ...string) string {
 func (c *Client) Request() *resty.Request {
 	return c.client.R().SetHeader("Authorization", fmt.Sprintf("Bearer %s", c.config.Token))
 }
+
+func (c *Client) Config() *config.Config {
+	return c.config
+}
+
+func (c *Client) Columns(cmdColumns []string, rootColumns []string, configColumns []string) []string {
+	if len(rootColumns) > 0 {
+		return rootColumns
+	} else if len(configColumns) > 0 {
+		return configColumns
+	}
+	return cmdColumns
+}
+
+func (c *Client) Sort(cmdSort string, rootSort string, configSort string) string {
+	if len(rootSort) > 0 {
+		return rootSort
+	} else if len(configSort) > 0 {
+		return configSort
+	}
+	return cmdSort
+}

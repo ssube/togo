@@ -30,9 +30,9 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func Execute(client *client.Client, config *config.Config) {
+func Execute(client *client.Client) {
 	rootClient = client
-	rootConfig = config
+	rootConfig = client.Config()
 
 	err := rootCmd.Execute()
 	if err != nil {

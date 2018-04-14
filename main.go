@@ -13,5 +13,5 @@ func main() {
 	log.SetFlags(0)
 
 	client := client.New(userConfig)
-	cmd.Execute(client, userConfig)
+	cmd.Execute(client)
 }

@@ -14,17 +14,20 @@ import (
 var rootClient = &client.Client{}
 var rootConfig = &config.Config{}
 
-// flags
+// persistent flags
 var rootColumns = []string{}
-var rootFilter = "overdue | today"
 var rootSort = ""
+
+// flags
+var rootFilter = ""
 
 var rootCmd = &cobra.Command{
 	Use:   "togo",
 	Short: "togo is a todoist client in go",
 	Run: func(cmd *cobra.Command, args []string) {
+		filter := rootClient.Sort("overdue | today", rootFilter, rootClient.Config().Default.Root.Filter)
 		tasks, _ := rootClient.GetTasks("", []string{
-			rootFilter,
+			filter,
 		}, []string{})
 		fmt.Printf("%d tasks to go\n", len(tasks))
 	},
@@ -43,6 +46,8 @@ func Execute(client *client.Client) {
 
 func init() {
 	rootCmd.PersistentFlags().StringSliceVarP(&rootColumns, "columns", "c", []string{}, "display columns")
-	rootCmd.PersistentFlags().StringVarP(&rootFilter, "filter", "f", rootFilter, "list filter")
 	rootCmd.PersistentFlags().StringVarP(&rootSort, "sort", "s", "", "sort column")
+
+	// root-only flags
+	rootCmd.Flags().StringVarP(&rootFilter, "filter", "f", rootFilter, "list filter")
 }

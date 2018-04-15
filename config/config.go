@@ -19,6 +19,9 @@ type Config struct {
 			Columns []string
 			Sort    string
 		}
+		Root struct {
+			Filter string
+		}
 		Tasks struct {
 			Columns []string
 			Labels  []string

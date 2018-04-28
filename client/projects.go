@@ -58,18 +58,13 @@ func (c *Client) FindProject(name string) (Project, error) {
 
 // GetProjects from API
 func (c *Client) GetProjects() ([]Project, error) {
-	resp, err := c.Request().Get(c.GetEndpoint("projects"))
+	body, _, err := c.Get("projects")
 	if err != nil {
 		log.Printf("error getting projects: %s", err.Error())
 		return nil, err
 	}
 
-	if resp.StatusCode() != 200 {
-		log.Printf("unexpected response status: %d", resp.StatusCode())
-		return nil, errors.New("unexpected response status")
-	}
-
-	projects, err := ParseProjects(resp.Body())
+	projects, err := ParseProjects(body)
 	if err != nil {
 		log.Printf("error parsing projects: %s", err.Error())
 		return nil, err

@@ -1,6 +1,7 @@
 package client
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -99,8 +100,25 @@ func New(config *config.Config) *Client {
 	return client
 }
 
-// GetEndpoint formats a partial path as an API endpoint
-func (c *Client) GetEndpoint(parts ...string) string {
+func (c *Client) Get(parts ...string) (body []byte, status int, err error) {
+	resp, err := c.Request().Get(c.Resolve(parts...))
+	if err != nil {
+		log.Printf("error getting labels: %s", err.Error())
+		return
+	}
+
+	status = resp.StatusCode()
+	if status != 200 {
+		log.Printf("unexpected response status: %d", status)
+		return nil, status, errors.New("unexpected response status")
+	}
+
+	body = resp.Body()
+	return
+}
+
+// Resolve a partial path as an API endpoint
+func (c *Client) Resolve(parts ...string) string {
 	path := []string{
 		c.config.Root,
 	}

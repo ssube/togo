@@ -56,18 +56,13 @@ func (c *Client) FindLabel(name string) (Label, error) {
 
 // GetLabels from API
 func (c *Client) GetLabels() ([]Label, error) {
-	resp, err := c.Request().Get(c.GetEndpoint("labels"))
+	body, _, err := c.Get("labels")
 	if err != nil {
 		log.Printf("error getting labels: %s", err.Error())
 		return nil, err
 	}
 
-	if resp.StatusCode() != 200 {
-		log.Printf("unexpected response status: %d", resp.StatusCode())
-		return nil, errors.New("unexpected response status")
-	}
-
-	labels, err := ParseLabels(resp.Body())
+	labels, err := ParseLabels(body)
 	if err != nil {
 		log.Printf("error parsing labels: %s", err.Error())
 		return nil, err

@@ -2,9 +2,9 @@
 
 CLI for [Todoist's](https://todoist.com) [v8 API](https://developer.todoist.com/rest/v8/) written in Go.
 
+[![docker size](https://img.shields.io/microbadger/image-size/ssube/togo.svg)](https://hub.docker.com/r/ssube/togo/)
 [![pipeline status](https://git.apextoaster.com/ssube/togo/badges/master/pipeline.svg)](https://git.apextoaster.com/ssube/togo/commits/master)
-[![docker size](https://images.microbadger.com/badges/image/ssube/togo:master.svg)](https://microbadger.com/images/ssube/togo:master)
-[![license](https://img.shields.io/github/license/ssube/togo.svg)](MIT license)
+[![license](https://img.shields.io/github/license/ssube/togo.svg)](https://github.com/ssube/togo/blob/master/LICENSE.md)
 
 Binaries are available from [the Github releases page](https://github.com/ssube/togo/releases) and container images
 from [the Docker hub](https://hub.docker.com/r/ssube/togo/).

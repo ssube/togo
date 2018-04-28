@@ -46,8 +46,22 @@ func ParseTasks(data []byte) ([]Task, error) {
 	return out, err
 }
 
+func (c *Client) BuildFilter(required []string, optional []string) string {
+	filter := make([]string, 0)
+
+	if len(required) > 0 {
+		filter = append(filter, "("+strings.Join(required, " & ")+")")
+	}
+
+	if len(optional) > 0 {
+		filter = append(filter, "("+strings.Join(optional, " | ")+")")
+	}
+
+	return strings.Join(filter, " & ")
+}
+
 // GetTasks lists incomplete and recurring tasks
-func (c *Client) GetTasks(project string, required []string, optionals []string) ([]Task, error) {
+func (c *Client) GetTasks(project string, required []string, optional []string) ([]Task, error) {
 	r := c.Request()
 
 	if project != "" {
@@ -55,19 +69,9 @@ func (c *Client) GetTasks(project string, required []string, optionals []string)
 	}
 
 	// build the filters
-	filter := make([]string, 0)
+	r = r.SetQueryParam("filter", c.BuildFilter(required, optional))
 
-	if len(required) > 0 {
-		filter = append(filter, "("+strings.Join(required, " & ")+")")
-	}
-
-	if len(optionals) > 0 {
-		filter = append(filter, "("+strings.Join(optionals, " | ")+")")
-	}
-
-	r = r.SetQueryParam("filter", strings.Join(filter, " & "))
-
-	resp, err := r.Get(c.GetEndpoint("tasks"))
+	resp, err := r.Get(c.Resolve("tasks"))
 	if err != nil {
 		log.Printf("error listing tasks: %s", err.Error())
 		return nil, err
@@ -101,7 +105,7 @@ func (c *Client) AddTask(task Task) ([]Task, error) {
 	resp, err := c.Request().
 		SetHeader("Content-Type", "application/json").
 		SetBody(post).
-		Post(c.GetEndpoint("tasks"))
+		Post(c.Resolve("tasks"))
 	if err != nil {
 		log.Printf("error adding task: %s", err.Error())
 		return nil, err
@@ -132,7 +136,7 @@ func (c *Client) CloseTask(task Task) error {
 
 	log.Printf("closing %d", task.ID)
 
-	path := c.GetEndpoint("tasks", strconv.Itoa(task.ID), "close")
+	path := c.Resolve("tasks", strconv.Itoa(task.ID), "close")
 	resp, err := c.Request().Post(path)
 	if err != nil {
 		log.Fatalf("error adding task: %s", err.Error())

@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/ssube/togo/client"
@@ -13,6 +14,7 @@ func init() {
 		"ID",
 		"Name",
 	}
+	date := time.RFC3339
 	sort := "Name"
 
 	labelsCmd := &cobra.Command{
@@ -25,8 +27,9 @@ func init() {
 			}
 
 			columns := rootClient.Columns(columns, rootColumns, rootClient.Config().Default.Labels.Columns)
+			date := rootClient.Sort(date, rootDate, rootClient.Config().Default.Date)
 			sort := rootClient.Sort(sort, rootSort, rootClient.Config().Default.Labels.Sort)
-			client.PrintLabels(os.Stdout, labels, columns, sort)
+			client.PrintLabels(os.Stdout, labels, columns, sort, date)
 		},
 	}
 

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
+	"time"
 
 	"github.com/ssube/togo/config"
 	"gopkg.in/resty.v1"
@@ -39,8 +40,27 @@ func CreateTable(f *os.File, cols []string) *tabwriter.Writer {
 	return w
 }
 
+func FormatDate(d DueDate, dateFmt string) (string, error) {
+	// if no timezone is provided, this is a simple date (day)
+	if d.Timezone == "" {
+		return d.Date, nil
+	}
+
+	zone, err := time.LoadLocation(d.Timezone)
+	if err != nil {
+		return d.DateTime, err
+	}
+
+	local, err := time.ParseInLocation(time.RFC3339, d.DateTime, zone)
+	if err != nil {
+		return d.DateTime, err
+	}
+
+	return local.Format(dateFmt), nil
+}
+
 // GetFields from a column list using reflection
-func GetFields(val interface{}, cols []string) []string {
+func GetFields(val interface{}, cols []string, dateFmt string) []string {
 	out := make([]string, len(cols))
 	rv := reflect.ValueOf(val).Elem()
 
@@ -59,6 +79,18 @@ func GetFields(val interface{}, cols []string) []string {
 			out[i] = strconv.FormatInt(field.Int(), 10)
 		case reflect.String:
 			out[i] = field.String()
+		case reflect.Struct:
+			val := field.Interface()
+			switch val.(type) {
+			case DueDate:
+				fmt, err := FormatDate(val.(DueDate), dateFmt)
+				if err != nil {
+					log.Fatalf("unable to format date: %s", err.Error)
+				}
+				out[i] = fmt
+			default:
+				log.Printf("unknown struct for column %s: %v", c, val)
+			}
 		case reflect.Slice:
 			fallthrough
 		default:

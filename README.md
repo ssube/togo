@@ -203,6 +203,7 @@ Features:
 - [x] add task labels
 - [x] config defaults
 - [x] columns & sort on root
+- [x] add due date column
 - [ ] list project names
 - [ ] list label names
 - [ ] test coverage

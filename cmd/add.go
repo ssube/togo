@@ -53,6 +53,7 @@ func init() {
 		"ID",
 		"Content",
 	}
+	date := rootConfig.Default.Date
 	done := false
 	labels := rootConfig.Default.Tasks.Labels
 	project := rootConfig.Default.Tasks.Project
@@ -76,8 +77,9 @@ func init() {
 			}
 
 			columns := rootClient.Columns(columns, rootColumns, rootClient.Config().Default.Projects.Columns)
+			date := rootClient.Sort(date, rootDate, rootClient.Config().Default.Date)
 			sort := rootClient.Sort(sort, rootSort, rootClient.Config().Default.Projects.Sort)
-			client.PrintTasks(os.Stdout, tasks, columns, sort)
+			client.PrintTasks(os.Stdout, tasks, columns, sort, date)
 			if done {
 				// this should be a single item
 				for _, t := range tasks {

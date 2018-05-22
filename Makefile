@@ -13,6 +13,10 @@ go-deps:
 go-test:
 	go test ${BUILD_OPTS} -cover ./...
 
+git-push:
+	git push github
+	git push gitlab
+
 docker-build:
 	docker build -T ${IMAGE_NAME} .
 

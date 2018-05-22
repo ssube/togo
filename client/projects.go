@@ -27,13 +27,13 @@ func ParseProjects(data []byte) ([]Project, error) {
 }
 
 // PrintProjects after sorting, with column headers
-func PrintProjects(f *os.File, projects []Project, cols []string, sortCol string) {
+func PrintProjects(f *os.File, projects []Project, cols []string, sortCol string, dateFmt string) {
 	w := CreateTable(f, cols)
 	SortByField(projects, sortCol)
 
 	// prepare a slice for cols and tabs
 	for _, p := range projects {
-		fields := GetFields(&p, cols)
+		fields := GetFields(&p, cols, dateFmt)
 		fmt.Fprintln(w, Tabulate(fields)...)
 	}
 

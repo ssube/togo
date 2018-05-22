@@ -16,6 +16,7 @@ var rootConfig = &config.Config{}
 
 // persistent flags
 var rootColumns = []string{}
+var rootDate = ""
 var rootSort = ""
 
 // flags
@@ -46,6 +47,7 @@ func Execute(client *client.Client) {
 
 func init() {
 	rootCmd.PersistentFlags().StringSliceVarP(&rootColumns, "columns", "c", []string{}, "display columns")
+	rootCmd.PersistentFlags().StringVarP(&rootDate, "date", "d", "", "date format")
 	rootCmd.PersistentFlags().StringVarP(&rootSort, "sort", "s", "", "sort column")
 
 	// root-only flags

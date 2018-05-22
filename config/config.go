@@ -11,6 +11,7 @@ import (
 
 type Config struct {
 	Default struct {
+		Date   string
 		Labels struct {
 			Columns []string
 			Sort    string

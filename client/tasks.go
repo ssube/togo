@@ -13,25 +13,32 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type DueDate struct {
+	Date     string `json:"date" yaml:"date"`
+	DateTime string `json:"datetime" yaml:"datetime"`
+	Timezone string `json:"timezone" yaml:"timezone"`
+}
+
 // Task model
 // https://developer.todoist.com/rest/v8/#tasks
 type Task struct {
-	Content  string `json:"content" yaml:"content"`
-	ID       int    `json:"id" yaml:"id,omitempty"`
-	Labels   []int  `json:"label_ids" yaml:"label_ids"`
-	Order    int    `json:"order" yaml:"order,omitempty"`
-	Priority int    `json:"priority" yaml:"priority,omitempty"`
-	Project  int    `json:"project_id" yaml:"project_id"`
+	Content  string  `json:"content" yaml:"content"`
+	Due      DueDate `json:"due" yaml:"due"`
+	ID       int     `json:"id" yaml:"id,omitempty"`
+	Labels   []int   `json:"label_ids" yaml:"label_ids"`
+	Order    int     `json:"order" yaml:"order,omitempty"`
+	Priority int     `json:"priority" yaml:"priority,omitempty"`
+	Project  int     `json:"project_id" yaml:"project_id"`
 }
 
 // PrintTasks in a table
-func PrintTasks(f *os.File, tasks []Task, cols []string, sortCol string) {
+func PrintTasks(f *os.File, tasks []Task, cols []string, sortCol string, dateFmt string) {
 	w := CreateTable(f, cols)
 	SortByField(tasks, sortCol)
 
 	// prepare a slice for cols and tabs
 	for _, t := range tasks {
-		fields := GetFields(&t, cols)
+		fields := GetFields(&t, cols, dateFmt)
 		fmt.Fprintln(w, Tabulate(fields)...)
 	}
 

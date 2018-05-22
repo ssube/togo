@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/ssube/togo/client"
@@ -14,6 +15,7 @@ func init() {
 		"ID",
 		"Content",
 	}
+	date := time.RFC3339
 	labels := rootConfig.Default.Tasks.Labels
 	project := rootConfig.Default.Tasks.Project
 	sort := "ID"
@@ -38,8 +40,9 @@ func init() {
 			}
 
 			columns := rootClient.Columns(columns, rootColumns, rootClient.Config().Default.Tasks.Columns)
+			date := rootClient.Sort(date, rootDate, rootClient.Config().Default.Date)
 			sort := rootClient.Sort(sort, rootSort, rootClient.Config().Default.Tasks.Sort)
-			client.PrintTasks(os.Stdout, tasks, columns, sort)
+			client.PrintTasks(os.Stdout, tasks, columns, sort, date)
 		},
 	}
 

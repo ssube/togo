@@ -26,12 +26,12 @@ func ParseLabels(data []byte) ([]Label, error) {
 }
 
 // PrintLabels after sorting, with column headers
-func PrintLabels(f *os.File, labels []Label, cols []string, sortCol string) {
+func PrintLabels(f *os.File, labels []Label, cols []string, sortCol string, dateFmt string) {
 	w := CreateTable(f, cols)
 	SortByField(labels, sortCol)
 
 	for _, l := range labels {
-		fields := GetFields(&l, cols)
+		fields := GetFields(&l, cols, dateFmt)
 		fmt.Fprintln(w, Tabulate(fields)...)
 	}
 

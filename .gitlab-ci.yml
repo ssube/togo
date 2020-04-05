@@ -107,10 +107,6 @@ build-image:
  
   dependencies:
     - build-go-linux-x86
-  script:
-    # build it
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
 
 # tag releases
 tag-latest:

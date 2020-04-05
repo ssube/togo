@@ -85,7 +85,7 @@ func GetFields(val interface{}, cols []string, dateFmt string) []string {
 			case DueDate:
 				fmt, err := FormatDate(val.(DueDate), dateFmt)
 				if err != nil {
-					log.Fatalf("unable to format date: %s", err.Error)
+					log.Fatalf("unable to format date: %s", err.Error())
 				}
 				out[i] = fmt
 			default:

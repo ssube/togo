@@ -6,7 +6,7 @@ stages:
 
 .build:go: &go-job
   stage: build
-  image: apextoaster/golang:master
+  image: apextoaster/golang:1.14-master
   tags:
     - runner:k8s
     - compute:high
@@ -15,7 +15,7 @@ stages:
     BUILD_OPTS: -a -v -x
 
   before_script:
-    - make go-clean go-deps
+    - make go-clean
 
   artifacts:
     expire_in: 1 hour
@@ -63,9 +63,9 @@ build:go:windows-x86:
 
 # always build an image (tagged by branch), publish tags to latest
 .build:docker: &build-docker
-  image: docker
+  image: apextoaster/docker:18.09
   services:
-    - docker:dind
+    - apextoaster/docker-dind:18.09
   tags:
     - runner:k8s
     - cloud:aws
@@ -120,7 +120,7 @@ tag:version:
     IMAGE_DST: ssube/togo:${CI_COMMIT_TAG}
 
 tag:bundle:
-  image: apextoaster/base:master
+  image: apextoaster/base:1.3-master
   stage: tag
   tags:
     - runner:k8s

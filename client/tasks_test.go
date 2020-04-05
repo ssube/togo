@@ -19,7 +19,7 @@ func TestPrintTasks(t *testing.T) {
 
 	PrintTasks(os.Stdout, tasks, []string{
 		"Content",
-	}, "Content")
+	}, "Content", "2006-01-02")
 }
 
 func TestParseTasks(t *testing.T) {

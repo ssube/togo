@@ -7,10 +7,7 @@ go-build:
 go-clean:
 	go clean -x
 
-go-deps:
-	dep ensure -v
-
-go-test:
+go-test: go-build
 	go test ${BUILD_OPTS} -cover ./...
 
 git-push:

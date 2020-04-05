@@ -4,12 +4,17 @@ stages:
   - image
   - tag
 
-.build:go: &go-job
+.build-base:
+  image: apextoaster/base:1.2
+  tags:
+    - platform:k8s
+    - runner:shared
+
+.build-go:
+  extends:
+    - .build-base
   stage: build
   image: apextoaster/golang:1.14-master
-  tags:
-    - runner:k8s
-    - compute:high
   variables:
     GOPATH: /build
     BUILD_OPTS: -a -v -x
@@ -27,48 +32,51 @@ stages:
       - vendor
     policy: pull
 
-test:go:
-  <<: *go-job
+test-go:
+  extends:
+    - .build-go
   stage: test
-  allow_failure: true # TODO: fix this once the tests compile
   script:
     - make go-test
   cache:
     <<: *go-cache
     policy: pull-push
 
-build:go:darwin-x86:
-  <<: *go-job
+build-go-darwin-x86:
+  extends:
+    - .build-go
   script:
     - GOOS=darwin GOARCH=386 make go-build
     - GOOS=darwin GOARCH=amd64 make go-build
 
-build:go:linux-arm:
-  <<: *go-job
+build-go-linux-arm:
+  extends:
+    - .build-go
   script:
     - GOOS=linux GOARCH=arm make go-build
     - GOOS=linux GOARCH=arm64 make go-build
 
-build:go:linux-x86:
-  <<: *go-job
+build-go-linux-x86:
+  extends:
+    - .build-go
   script:
     - GOOS=linux GOARCH=386 make go-build
     - GOOS=linux GOARCH=amd64 make go-build
 
-build:go:windows-x86:
-  <<: *go-job
+build-go-windows-x86:
+  extends:
+    - .build-go
   script:
     - GOOS=windows GOARCH=386 make go-build
     - GOOS=windows GOARCH=amd64 make go-build
 
 # always build an image (tagged by branch), publish tags to latest
-.build:docker: &build-docker
+.build-docker:
+  extends:
+    - .build-base
   image: apextoaster/docker:18.09
   services:
     - apextoaster/docker-dind:18.09
-  tags:
-    - runner:k8s
-    - cloud:aws
 
   before_script:
     # prep secrets
@@ -80,27 +88,31 @@ build:go:windows-x86:
     DOCKER_HOST: tcp://localhost:2375
     IMAGE_TAG: ssube/togo:$CI_COMMIT_REF_SLUG
 
-.build.retag: &build-retag
+.build-retag:
+  extends:
+    - .build-docker
   stage: tag
   script:
     - docker pull ${IMAGE_SRC}
     - docker tag ${IMAGE_SRC} ${IMAGE_DST}
     - docker push ${IMAGE_DST}
  
-build:image:
-  <<: *build-docker
+build-image:
+  extends:
+    - .build-docker
   stage: image
  
   dependencies:
-    - build:go:linux-x86
+    - build-go-linux-x86
   script:
     # build it
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
 
 # tag releases
-tag:latest:
-  <<: [*build-docker, *build-retag]
+tag-latest:
+  extends:
+    - .build-retag
   only:
     - master
 
@@ -109,8 +121,9 @@ tag:latest:
     IMAGE_SRC: ssube/togo:master
     IMAGE_DST: ssube/togo:latest
 
-tag:version:
-  <<: [*build-docker, *build-retag]
+tag-version:
+  extends:
+    - .build-retag
   only:
     - tags
 
@@ -120,19 +133,18 @@ tag:version:
     IMAGE_DST: ssube/togo:${CI_COMMIT_TAG}
 
 tag:bundle:
-  image: apextoaster/base:1.3-master
+  extends:
+    - .build-base
   stage: tag
-  tags:
-    - runner:k8s
   only:
     - master
     - tags
 
   dependencies:
-    - build:go:darwin-x86
-    - build:go:linux-arm
-    - build:go:linux-x86
-    - build:go:windows-x86
+    - build-go-darwin-x86
+    - build-go-linux-arm
+    - build-go-linux-x86
+    - build-go-windows-x86
 
   script:
     - make bundle-all

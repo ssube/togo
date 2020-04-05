@@ -1,8 +1,10 @@
 stages:
+  - status-pre
   - test
   - build
   - image
   - tag
+  - status-post
 
 .build-base:
   image: apextoaster/base:1.2
@@ -154,3 +156,26 @@ tag:bundle:
     expire_in: 1 day
     paths:
       - bin/
+
+github-pending:
+  stage: status-pre
+  extends:
+    - .build-base
+  script:
+    - ./scripts/github-status.sh pending
+
+github-failure:
+  stage: status-post
+  extends:
+    - .build-base
+  when: on_failure
+  script:
+    - ./scripts/github-status.sh failure
+
+github-success:
+  stage: status-post
+  extends:
+    - .build-base
+  when: on_success
+  script:
+    - ./scripts/github-status.sh success

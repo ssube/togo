@@ -77,16 +77,17 @@ build-go-windows-x86:
   image: apextoaster/docker:18.09
   services:
     - apextoaster/docker-dind:18.09
-
-  before_script:
-    # prep secrets
-    - mkdir /root/.docker
-    - ln -s /secrets/docker /root/.docker/config.json
-    - docker info
   variables: &vars-docker
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://localhost:2375
-    IMAGE_TAG: ssube/togo:$CI_COMMIT_REF_SLUG
+
+  before_script:
+    - mkdir ${HOME}/.docker
+    - echo "${DOCKER_SECRET}" | base64 -d > ${HOME}/.docker/config.json
+  script:
+    - /build-scripts/docker-build.sh --push
+  after_script:
+    - rm -rfv ${HOME}/.docker
 
 .build-retag:
   extends:

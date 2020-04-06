@@ -8,6 +8,6 @@ require (
 	github.com/spf13/pflag v1.0.3
 	golang.org/x/net v0.0.0-20190522155817-f3200d17e092
 	golang.org/x/text v0.3.2
-	gopkg.in/resty.v1 v1.12.0
+	gopkg.in/resty.v2 v2.2.0
 	gopkg.in/yaml.v2 v2.2.8
 )

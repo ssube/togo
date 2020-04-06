@@ -3,7 +3,6 @@ stages:
   - test
   - build
   - image
-  - tag
   - status-post
 
 .build-base:
@@ -104,7 +103,7 @@ build-image:
 build-binary:
   extends:
     - .build-base
-  stage: tag
+  stage: image
   only:
     - master
     - tags

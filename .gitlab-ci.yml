@@ -11,6 +11,24 @@ stages:
     - platform:k8s
     - runner:shared
 
+.build-climate:
+  image: apextoaster/code-climate:0.6
+  tags:
+    - platform:k8s
+    - runner:shared
+  allow_failure: false
+  variables:
+    CI_BRANCH: "${CI_COMMIT_REF_NAME}"
+    GIT_BRANCH: "${CI_COMMIT_REF_NAME}"
+    GIT_COMMIT_SHA: "${CI_COMMIT_SHA}"
+
+.build-codecov:
+  image: apextoaster/codecov:3.1
+  tags:
+    - platform:k8s
+    - runner:shared
+  allow_failure: false
+
 .build-go:
   extends:
     - .build-base
@@ -33,6 +51,7 @@ stages:
       - vendor
     policy: pull
 
+# real jobs
 test-go:
   extends:
     - .build-go
@@ -122,6 +141,39 @@ build-binary:
     paths:
       - bin/
 
+# commit status
+climate-pending:
+  stage: status-pre
+  extends:
+    - .build-climate
+
+  script:
+    - cc-test-reporter before-build
+
+climate-success:
+  stage: status-post
+  extends:
+    - .build-climate
+
+  dependencies:
+    - test-go
+  script:
+    # cc is overly picky about paths, so fix them up
+    - |
+      cat out/cover.out | sed "s+github.com\\/ssube\\/togo+${PWD}+" > c.out
+    - make upload-climate
+
+codecov-success:
+  stage: status-post
+  extends:
+    - .build-codecov
+  when: on_success
+  dependencies:
+    - test-go
+  script:
+    - make upload-codecov
+
+# github jobs
 github-pending:
   stage: status-pre
   extends:

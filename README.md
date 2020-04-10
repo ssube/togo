@@ -1,13 +1,34 @@
 # togo
 
-CLI for [Todoist's](https://todoist.com) [v8 API](https://developer.todoist.com/rest/v8/) written in Go.
+CLI for [Todoist's](https://todoist.com) [v1 API](https://developer.todoist.com/rest/v1/) written in Go.
 
-[![docker size](https://img.shields.io/microbadger/image-size/ssube/togo.svg)](https://hub.docker.com/r/ssube/togo/)
-[![pipeline status](https://git.apextoaster.com/ssube/togo/badges/master/pipeline.svg)](https://git.apextoaster.com/ssube/togo/commits/master)
-[![license](https://img.shields.io/github/license/ssube/togo.svg)](https://github.com/ssube/togo/blob/master/LICENSE.md)
+[![Pipeline Status](https://git.apextoaster.com/ssube/togo/badges/master/pipeline.svg)](https://git.apextoaster.com/ssube/togo/commits/master)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=ssube_togo&metric=ncloc)](https://sonarcloud.io/dashboard?id=ssube_togo)
+[![Test coverage](https://codecov.io/gh/ssube/togo/branch/master/graph/badge.svg)](https://codecov.io/gh/ssube/togo)
+[![MIT license](https://img.shields.io/github/license/ssube/togo.svg)](https://github.com/ssube/togo/blob/master/LICENSE.md)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fssube%2Ftogo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fssube%2Ftogo?ref=badge_shield)
+
+[![Open bug count](https://img.shields.io/github/issues-raw/ssube/togo/type-bug.svg)](https://github.com/ssube/togo/issues?q=is%3Aopen+is%3Aissue+label%3Atype%2Fbug)
+[![Open issue count](https://img.shields.io/github/issues-raw/ssube/togo.svg)](https://github.com/ssube/togo/issues?q=is%3Aopen+is%3Aissue)
+[![Closed issue count](https://img.shields.io/github/issues-closed-raw/ssube/togo.svg)](https://github.com/ssube/togo/issues?q=is%3Aissue+is%3Aclosed)
+
+[![Renovate badge](https://badges.renovateapi.com/github/ssube/togo)](https://renovatebot.com)
+[![Known vulnerabilities](https://snyk.io/test/github/ssube/togo/badge.svg)](https://snyk.io/test/github/ssube/togo)
+
+[![Maintainability score](https://api.codeclimate.com/v1/badges/726aa60f88ae1a36248f/maintainability)](https://codeclimate.com/github/ssube/togo/maintainability)
+[![Technical debt ratio](https://img.shields.io/codeclimate/tech-debt/ssube/togo.svg)](https://codeclimate.com/github/ssube/togo/trends/technical_debt)
+[![Quality issues](https://img.shields.io/codeclimate/issues/ssube/togo.svg)](https://codeclimate.com/github/ssube/togo/issues)
+
+## Releases
 
 Binaries are available from [the Github releases page](https://github.com/ssube/togo/releases) and container images
 from [the Docker hub](https://hub.docker.com/r/ssube/togo/).
+
+[![github release link](https://img.shields.io/badge/github-release-blue?logo=github)](https://github.com/ssube/togo/releases)
+[![github release version](https://img.shields.io/github/tag/ssube/togo.svg)](https://github.com/ssube/togo/releases)
+[![github commits since release](https://img.shields.io/github/commits-since/ssube/togo/0.4.svg)](https://github.com/ssube/togo/compare/0.4...master)
+
+[![docker size](https://img.shields.io/microbadger/image-size/ssube/togo.svg)](https://hub.docker.com/r/ssube/togo/)
 
 ## Build
 
@@ -23,7 +44,7 @@ togo expects a `~/.togo.yml` file to exist in the current user's home directory.
 The config file should contain:
 
 ```yaml
-root: "https://beta.todoist.com/API/v8"
+root: "https://api.todoist.com/rest/v1"
 token: "api-token"
 ```
 

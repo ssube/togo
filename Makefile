@@ -8,7 +8,9 @@ go-clean:
 	go clean -x
 
 go-test: go-build
-	go test ${BUILD_OPTS} -cover ./...
+	go test ${BUILD_OPTS} -cover -coverprofile=out/cover.out ./...
+	go tool cover -html=out/cover.out -o=out/cover.html
+	go tool cover -func=out/cover.out
 
 git-push:
 	git push github
@@ -39,3 +41,14 @@ bundle-all:
 bundle-clean:
 	rm -v ./bin/hashes || true
 	rm -v ./bin/togo-* || true
+
+upload-climate:
+	cc-test-reporter after-build \
+		--debug \
+		-r "$(shell echo "${CODECLIMATE_SECRET}" | base64 -d)" \
+		-t gocov
+
+upload-codecov:
+	codecov --disable=gcov \
+		--file=out/cover.out \
+		--token=$(shell echo "${CODECOV_SECRET}" | base64 -d)

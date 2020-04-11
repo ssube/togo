@@ -58,6 +58,10 @@ test-go:
   stage: test
   script:
     - make go-test
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - out/cover.*
   cache:
     <<: *go-cache
     policy: pull-push

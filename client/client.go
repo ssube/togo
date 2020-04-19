@@ -12,8 +12,8 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/ssube/togo/config"
-	"gopkg.in/resty.v1"
 )
 
 // Client for API

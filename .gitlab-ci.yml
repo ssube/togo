@@ -23,7 +23,7 @@ stages:
     GIT_COMMIT_SHA: "${CI_COMMIT_SHA}"
 
 .build-codecov:
-  image: apextoaster/codecov:3.1
+  image: apextoaster/codecov:3.7
   tags:
     - platform:k8s
     - runner:shared

@@ -6,7 +6,7 @@ stages:
   - status-post
 
 .build-base:
-  image: apextoaster/base:1.3
+  image: apextoaster/base:1.4
   tags:
     - platform:k8s
     - runner:shared

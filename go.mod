@@ -8,6 +8,6 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b
-	golang.org/x/text v0.3.4
+	golang.org/x/text v0.3.5
 	gopkg.in/yaml.v2 v2.4.0
 )

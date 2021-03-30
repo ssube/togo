@@ -7,7 +7,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
-	golang.org/x/net v0.0.0-20210330142815-c8897c278d10
+	golang.org/x/net v0.0.0-20210330230544-e57232859fb2
 	golang.org/x/text v0.3.5
 	gopkg.in/yaml.v2 v2.4.0
 )

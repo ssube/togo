@@ -6,13 +6,13 @@ stages:
   - status-post
 
 .build-base:
-  image: apextoaster/base:1.4
+  image: docker.artifacts.apextoaster.com/apextoaster/base:2.4
   tags:
     - platform:k8s
     - runner:shared
 
 .build-climate:
-  image: apextoaster/code-climate:0.6
+  image: docker.artifacts.apextoaster.com/apextoaster/code-climate:0.6
   tags:
     - platform:k8s
     - runner:shared
@@ -23,7 +23,7 @@ stages:
     GIT_COMMIT_SHA: "${CI_COMMIT_SHA}"
 
 .build-codecov:
-  image: apextoaster/codecov:3.7
+  image: docker.artifacts.apextoaster.com/apextoaster/codecov:3.7
   tags:
     - platform:k8s
     - runner:shared
@@ -33,7 +33,7 @@ stages:
   extends:
     - .build-base
   stage: build
-  image: apextoaster/golang:1.14-master
+  image: docker.artifacts.apextoaster.com/apextoaster/golang:1.14-master
   variables:
     GOPATH: /build
     BUILD_OPTS: -a -v -x
@@ -98,9 +98,9 @@ build-go-windows-x86:
 .build-docker:
   extends:
     - .build-base
-  image: apextoaster/docker:18.09
+  image: docker.artifacts.apextoaster.com/apextoaster/docker:18.09
   services:
-    - apextoaster/docker-dind:18.09
+    - docker.artifacts.apextoaster.com/apextoaster/docker-dind:18.09
   variables: &vars-docker
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://localhost:2375

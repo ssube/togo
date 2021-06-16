@@ -6,7 +6,7 @@ stages:
   - status-post
 
 .build-base:
-  image: docker.artifacts.apextoaster.com/apextoaster/base:2.4
+  image: docker.artifacts.apextoaster.com/apextoaster/base:1.4
   tags:
     - platform:k8s
     - runner:shared
@@ -21,13 +21,6 @@ stages:
     CI_BRANCH: "${CI_COMMIT_REF_NAME}"
     GIT_BRANCH: "${CI_COMMIT_REF_NAME}"
     GIT_COMMIT_SHA: "${CI_COMMIT_SHA}"
-
-.build-codecov:
-  image: docker.artifacts.apextoaster.com/apextoaster/codecov:3.7
-  tags:
-    - platform:k8s
-    - runner:shared
-  allow_failure: false
 
 .build-go:
   extends:
@@ -166,16 +159,6 @@ climate-success:
     - |
       cat out/cover.out | sed "s+github.com\\/ssube\\/togo+${PWD}+" > c.out
     - make upload-climate
-
-codecov-success:
-  stage: status-post
-  extends:
-    - .build-codecov
-  when: on_success
-  dependencies:
-    - test-go
-  script:
-    - make upload-codecov
 
 # github jobs
 github-pending:
